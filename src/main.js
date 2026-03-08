@@ -1,8 +1,9 @@
 "use strict"
 
 let config = {
+    parent: 'game',
     type: Phaser.AUTO,
-    width: 1000,
+    width: 1100,
     height: 700,
     render: {
         pixelArt: true
@@ -17,7 +18,14 @@ let config = {
             debug: false
         }
     },
+    scale: {
+        mode: Phaser.Scale.NONE,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    },
     scene: [ PostcardGame ]
 }
+
+let width = config.width;
+let height = config.height;
 
 let game = new Phaser.Game(config)
