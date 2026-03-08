@@ -49,10 +49,14 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.scene.input.setDraggable(this.square2);*/
 
         //create all images for generator and parts
-        this.generatorImage = this.scene.add.sprite(width / 2, 50, 'generator').setInteractive().setOrigin(.5, 0);
-        this.generatorCover = this.scene.add.sprite(width / 2, 50, 'generatorCover').setInteractive().setOrigin(.5, 0);
+        this.generatorImage = this.scene.add.sprite(width / 2, 50, 'generator', 0).setInteractive().setOrigin(.5, 0);
+        this.generatorCover = this.scene.add.sprite(width / 2, 50, 'generatorCover').setInteractive().setOrigin(.5, 0).setDepth(100);
         this.scene.input.setDraggable(this.generatorCover);
         this.targetGeneratorCover = this.scene.add.rectangle(150, 650, 540, 360, 0xffff00, 0.25);
+
+        //create all images for airfilter state
+        this.airFilterDirty = this.scene.add.sprite(this.generatorImage.x -161, this.generatorImage.y + 105, 'airFilter', 1).setInteractive().setOrigin(0.5, 0);
+        this.airFilerCover = this.scene.add.sprite(this.generatorImage.x - 159, this.generatorImage.y + 91, 'airFilterCover').setInteractive().setOrigin(0.5, 0);
 
     }
 
@@ -90,8 +94,8 @@ class BrokenState extends State {
 class AirFilterState extends State {
     enter(scene, generator){
         console.log("Enter airFilterState");
-        //generator.square1.disableInteractive();
-        //generator.square2.disableInteractive();
+        scene.input.setDraggable(generator.airFilterDirty);
+        scene.input.setDraggable(generator.airFilerCover);
         
         //generator.square3.setInteractive();
 
