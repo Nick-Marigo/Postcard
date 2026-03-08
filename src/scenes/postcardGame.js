@@ -6,17 +6,13 @@ class PostcardGame extends Phaser.Scene {
     preload() {
         this.load.path = "./assets/"
         this.load.image("square", "Square.png")
+        this.load.image('generator', 'generator.png')
+        this.load.image('generatorCover', 'generatorCover.png');
     }
 
     create() {
 
-        /*this.square = this.add.sprite(500, 350, "square").setInteractive();
-        this.square2 = this.add.sprite(500, 350, "square").setTint(0xFF0000).setInteractive();
-
-        this.input.setDraggable(this.square);
-        this.input.setDraggable(this.square2);*/
-
-        this.generator = new Generator(this, width/2, height/2, 'texture');
+        this.generator = new Generator(this, width/2, height/2);
 
     }
 

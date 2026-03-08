@@ -1,7 +1,6 @@
 class Generator extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, texture) {
-        super(scene, x, y, texture);
-        scene.add.existing(this);
+    constructor(scene, x, y) {
+        super(scene, x, y);
 
         this.scene = scene;
 
@@ -36,8 +35,8 @@ class Generator extends Phaser.GameObjects.Sprite {
     }
 
     create() {
-        //create all images for generator and parts
-        this.square1 = this.scene.add.sprite(500, 350, "square");
+        //testing objects to get mechanics working
+        /*this.square1 = this.scene.add.sprite(500, 350, "square");
         this.square2 = this.scene.add.sprite(500, 650, "square").setTint(0xFF0000);
         this.square3 = this.scene.add.sprite(700, 650, "square").setTint(0x00FF00);
 
@@ -47,7 +46,13 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.square1.setInteractive();
         this.square2.setInteractive();
         this.scene.input.setDraggable(this.square1);
-        this.scene.input.setDraggable(this.square2);
+        this.scene.input.setDraggable(this.square2);*/
+
+        //create all images for generator and parts
+        this.generatorImage = this.scene.add.sprite(width / 2, 50, 'generator').setInteractive().setOrigin(.5, 0);
+        this.generatorCover = this.scene.add.sprite(width / 2, 50, 'generatorCover').setInteractive().setOrigin(.5, 0);
+        this.scene.input.setDraggable(this.generatorCover);
+        this.targetGeneratorCover = this.scene.add.rectangle(150, 650, 540, 360, 0xffff00, 0.25);
 
     }
 
@@ -69,12 +74,12 @@ class BrokenState extends State {
 
     handleDrop(gameObject, generator) {
 
-        if(gameObject === generator.square1) {
-            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.square1.getBounds(), generator.target1.getBounds())) {
-                generator.square1.x = generator.target1.x;
-                generator.square1.y = generator.target1.y;
-                generator.square1.disableInteractive();
-                console.log("square snapped into place");
+        if(gameObject === generator.generatorCover) {
+            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.generatorCover.getBounds(), generator.targetGeneratorCover.getBounds())) {
+                generator.generatorCover.x = 240
+                generator.generatorCover.y = 450
+                generator.generatorCover.disableInteractive();
+                console.log("Cover snapped into place");
                 generator.brokenStep++;
             }
         }
@@ -85,12 +90,12 @@ class BrokenState extends State {
 class AirFilterState extends State {
     enter(scene, generator){
         console.log("Enter airFilterState");
-        generator.square1.disableInteractive();
-        generator.square2.disableInteractive();
+        //generator.square1.disableInteractive();
+        //generator.square2.disableInteractive();
         
-        generator.square3.setInteractive();
+        //generator.square3.setInteractive();
 
-        scene.input.setDraggable(generator.square2);
+        //scene.input.setDraggable(generator.square2);
 
     }
 
