@@ -18,21 +18,34 @@ class PostcardGame extends Phaser.Scene {
 
     create() {
 
+        //Blinking animation for air Filter Cover
+        this.anims.create({
+            key: 'airFilterCoverBlink',
+            frames: this.anims.generateFrameNumbers('airFilterCover', {start: 0, end: 1}),
+            frameRate: 4,
+            repeat: -1
+        });
+
+        //Create new generator
         this.generator = new Generator(this, width/2, height/2);
 
+        //Create new checklist
         this.checklist = new Checklist(this, 100, 225);
 
-        this.checklist.setTasks([
-            "Start generator",
-            "Remove cover"
-        ]);
+        // Key to be able to switch scenes easily
+        this.input.keyboard.on('keydown-S', () => {
+            console.log('Switching Scene to postcardBackScene');
+            this.scene.start('postcardBackScene');
+        }, this);
 
     }
 
     update() {
 
+        //Update generator state machine
         this.generator.generatorFSM.step();
 
+        //Update generator
         this.generator.update();
 
     }

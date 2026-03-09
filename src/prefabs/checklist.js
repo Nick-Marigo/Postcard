@@ -11,6 +11,7 @@ class Checklist {
         this.list = scene.add.image(x, y, 'checklist');
     }
 
+    // Clears any existing tasks and creates a new list of tasks with hidden cross-out line for each one
     setTasks(taskArray) {
 
         this.tasks.forEach(t => t.destroy());
@@ -46,6 +47,7 @@ class Checklist {
 
     }
 
+    //Animates the cross-out line for the given index of the current task list and fades the text.
     completeTask(index) {
 
         let line = this.lines[index];

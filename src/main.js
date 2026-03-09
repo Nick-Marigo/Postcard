@@ -1,3 +1,8 @@
+//Name: Nick Marigo
+//Project: Postcard
+//Date: 3/18/26
+//Hours: 17
+
 //Sounds 
 //Generator Startup, Run, Shutdown: https://freesound.org/people/JeffWojo/sounds/169940/
 // High performance car engine turning over won't start: https://freesound.org/people/mrrap4food/sounds/618984/
@@ -29,7 +34,7 @@ let config = {
         mode: Phaser.Scale.NONE,
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
-    scene: [ PostcardGame ]
+    scene: [ PostcardGame, PostcardBack ]
 }
 
 let width = config.width;
