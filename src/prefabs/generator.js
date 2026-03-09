@@ -48,11 +48,45 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.scene.input.setDraggable(this.square1);
         this.scene.input.setDraggable(this.square2);*/
 
+        //Key mechanic
+        this.keyhole = this.scene.add.circle(722, 254, 18, 0xffff00, .25).setInteractive().setDepth(101);
+        //this.keyhole = this.scene.add.circle(100, 100, 18, 0xffff00, .25).setDepth(101);
+        this.progressRing = this.scene.add.graphics().setDepth(102);
+
+        this.isHoldingKey = false;
+        this.holdProgress = 0;
+        this.holdDuration = 6000;
+        this.startupComplete = false;
+        this.startupSound = this.scene.sound.add('startup');
+
+        this.keyhole.on('pointerdown', () => {
+            if(!this.keyhole.input.enabled) return;
+            if(this.startupComplete) return;
+
+            this.isHoldingKey = true;
+
+            if(!this.startupSound.isPlaying) {
+                this.startupSound.play();
+            }
+        });
+
+        this.scene.input.on('pointerup', () => {
+            if (!this.keyhole.input.enabled) return;
+            if(this.startupComplete) return;
+
+            this.isHoldingKey = false;
+            this.holdProgress = 0;
+            this.progressRing.clear();
+
+            if(this.startupSound.isPlaying) {
+                this.startupSound.stop();
+            }
+        })
+
         //create all images for generator and parts
-        this.generatorImage = this.scene.add.sprite(width / 2, 50, 'generator', 0).setInteractive().setOrigin(.5, 0);
-        this.generatorCover = this.scene.add.sprite(width / 2, 50, 'generatorCover').setInteractive().setOrigin(.5, 0).setDepth(100);
-        this.scene.input.setDraggable(this.generatorCover);
-        this.targetGeneratorCover = this.scene.add.rectangle(200, 675, 540, 360, 0xffff00, 0.25);
+        this.generatorImage = this.scene.add.sprite(width / 2, 50, 'generator', 0).setOrigin(.5, 0);
+        this.generatorCover = this.scene.add.sprite(width / 2, 50, 'generatorCover').setOrigin(.5, 0).setDepth(100);
+        this.targetGeneratorCover = this.scene.add.rectangle(200, 675, 540, 360, 0xffff00, 0.25).setVisible(false);
 
         //create all images for airfilter state
 
@@ -69,17 +103,73 @@ class Generator extends Phaser.GameObjects.Sprite {
 
     }
 
+    update() {
+        if(this.isHoldingKey && !this.startupComplete) {
+            this.holdProgress += this.scene.game.loop.delta;
+
+            let percent = Phaser.Math.Clamp(this.holdProgress / this.holdDuration, 0, 1);
+            this.drawProgressCircle(this.keyhole.x, this.keyhole.y, 28, percent);
+
+            if(percent >= 1) {
+                this.startupComplete = true;
+                this.isHoldingKey = false;
+                this.progressRing.clear();
+
+                if(this.startupSound.isPlaying){
+                    this.startupSound.stop();
+                }
+            }
+        }
+    }
+
+    drawProgressCircle(x, y, radius, percent) {
+        this.progressRing.clear();
+        this.progressRing.lineStyle(6, 0xffff00, 1);
+        this.progressRing.beginPath();
+        this.progressRing.arc(x, y, radius, Phaser.Math.DegToRad(-90), Phaser.Math.DegToRad(-90 + 360 * percent), false);
+        this.progressRing.strokePath();
+    }
+
+    enableKeyholeTask() {
+        this.startupComplete = false;
+        this.isHoldingKey = false;
+        this.holdProgress = 0;
+        this.progressRing.clear();
+        this.keyhole.setInteractive();
+    }
+
+    disableKeyholeTask() {
+        this.keyhole.disableInteractive();
+        this.isHoldingKey = false;
+        this.holdProgress = 0;
+        this.progressRing.clear();
+
+        if(this.startupSound.isPlaying) {
+            this.startupSound.stop();
+        }
+    }
+
 }
 
 class BrokenState extends State {
     enter(scene, generator){
         console.log("Enter brokenState");
+        generator.enableKeyholeTask();
 
     }
 
     execute(scene, generator) {
 
+        if(generator.startupComplete) {
+            generator.disableKeyholeTask();
+            generator.generatorCover.setInteractive();
+            scene.input.setDraggable(generator.generatorCover);
+            generator.keyhole.setVisible(false);
+            generator.targetGeneratorCover.setVisible(true);
+        }
+
         if(generator.brokenStep === 1) {
+            generator.targetGeneratorCover.setVisible(false);
             generator.generatorFSM.transition('airFilter');
         }
 

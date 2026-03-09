@@ -1,3 +1,9 @@
+//Sounds 
+//Generator Startup, Run, Shutdown: https://freesound.org/people/JeffWojo/sounds/169940/
+// High performance car engine turning over won't start: https://freesound.org/people/mrrap4food/sounds/618984/
+
+
+
 "use strict"
 
 let config = {

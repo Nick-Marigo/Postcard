@@ -10,6 +10,9 @@ class PostcardGame extends Phaser.Scene {
         this.load.image('generatorCover', 'generatorCover.png');
         this.load.spritesheet('airFilterCover', 'airFilterCover.png', {frameWidth: 70, frameHeight: 80});
         this.load.spritesheet('airFilter', 'airFilter.png', {frameWidth: 60, frameHeight: 40});
+
+        this.load.path = "./assets/sounds/"
+        this.load.audio('startup', 'startupSound.mp3');
     }
 
     create() {
@@ -21,6 +24,8 @@ class PostcardGame extends Phaser.Scene {
     update() {
 
         this.generator.generatorFSM.step();
+
+        this.generator.update();
 
     }
 }
