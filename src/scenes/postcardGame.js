@@ -10,6 +10,7 @@ class PostcardGame extends Phaser.Scene {
         this.load.image('generatorCover', 'generatorCover.png');
         this.load.spritesheet('airFilterCover', 'airFilterCover.png', {frameWidth: 70, frameHeight: 80});
         this.load.spritesheet('airFilter', 'airFilter.png', {frameWidth: 60, frameHeight: 40});
+        this.load.image('checklist', 'checklist.png');
 
         this.load.path = "./assets/sounds/"
         this.load.audio('startup', 'startupSound.mp3');
@@ -18,6 +19,13 @@ class PostcardGame extends Phaser.Scene {
     create() {
 
         this.generator = new Generator(this, width/2, height/2);
+
+        this.checklist = new Checklist(this, 100, 225);
+
+        this.checklist.setTasks([
+            "Start generator",
+            "Remove cover"
+        ]);
 
     }
 

@@ -166,10 +166,12 @@ class BrokenState extends State {
             scene.input.setDraggable(generator.generatorCover);
             generator.keyhole.setVisible(false);
             generator.targetGeneratorCover.setVisible(true);
+            scene.checklist.completeTask(0);
         }
 
         if(generator.brokenStep === 1) {
             generator.targetGeneratorCover.setVisible(false);
+            scene.checklist.completeTask(1);
             generator.generatorFSM.transition('airFilter');
         }
 
@@ -198,6 +200,13 @@ class AirFilterState extends State {
         scene.input.setDraggable(generator.airFilterDirty);
         scene.input.setDraggable(generator.airFilterCover);
         scene.input.setDraggable(generator.airFilterClean);
+
+        scene.checklist.setTasks([
+            'Remove air filter cover',
+            'Remove dirty filter',
+            'Insert clean filter',
+            'Replace air filter cover'
+        ]);
         
         //generator.square3.setInteractive();
 
