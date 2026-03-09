@@ -58,9 +58,9 @@ class PostcardGame extends Phaser.Scene {
             speed: 50,
             gravityX: 200,
             scale: {start: 1, end: 0},
-            lifespan: 1000
+            lifespan: 1000,
+            emitting: false
         });
-        this.exhaustemitter.pause();
 
         //Create new generator
         this.generator = new Generator(this, width/2, height/2);
@@ -82,7 +82,7 @@ class PostcardGame extends Phaser.Scene {
         this.generator.generatorFSM.step();
 
         //Update generator
-        this.generator.update();
+        this.generator.update(this.exhaustemitter);
 
     }
 }

@@ -111,7 +111,7 @@ class Generator extends Phaser.GameObjects.Sprite {
 
     }
 
-    update() {
+    update(exhaustemitter) {
         
         //Checks if player is holding key and startup has not been completed. Will call drawProgressCircle to draw progessRing
         if(this.isHoldingKey && !this.startupComplete) {
@@ -119,6 +119,7 @@ class Generator extends Phaser.GameObjects.Sprite {
 
             let percent = Phaser.Math.Clamp(this.holdProgress / this.holdDuration, 0, 1);
             this.drawProgressCircle(this.keyhole.x, this.keyhole.y, 28, percent);
+            exhaustemitter.emitting = true;
 
             if(percent >= 1) {
                 this.startupComplete = true;
@@ -129,6 +130,8 @@ class Generator extends Phaser.GameObjects.Sprite {
                     this.startupSound.stop();
                 }
             }
+        } else {
+            exhaustemitter.emitting = false;
         }
     }
 
