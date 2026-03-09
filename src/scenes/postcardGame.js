@@ -7,10 +7,11 @@ class PostcardGame extends Phaser.Scene {
         this.load.path = "./assets/"
         this.load.image("square", "Square.png")
         this.load.spritesheet('generator', 'generator.png', {frameWidth: 540, frameHeight: 360})
-        this.load.image('generatorCover', 'generatorCover.png');
+        this.load.spritesheet('generatorCover', 'generatorCover.png', {frameWidth: 540, frameHeight: 360});
         this.load.spritesheet('airFilterCover', 'airFilterCover.png', {frameWidth: 70, frameHeight: 80});
         this.load.spritesheet('airFilter', 'airFilter.png', {frameWidth: 60, frameHeight: 40});
         this.load.image('checklist', 'checklist.png');
+        this.load.image('exhaust', 'exhaust.png');
 
         this.load.path = "./assets/sounds/"
         this.load.audio('startup', 'startupSound.mp3');
@@ -18,13 +19,48 @@ class PostcardGame extends Phaser.Scene {
 
     create() {
 
-        //Blinking animation for air Filter Cover
+        //Blinking animations for...
+
+        //Air filter Cover
         this.anims.create({
             key: 'airFilterCoverBlink',
             frames: this.anims.generateFrameNumbers('airFilterCover', {start: 0, end: 1}),
             frameRate: 4,
             repeat: -1
         });
+
+        //Generator cover
+        this.anims.create({
+            key: 'generatorCoverBlink',
+            frames: this.anims.generateFrameNumbers('generatorCover', {start: 0, end: 1}),
+            frameRate: 4,
+            repeat: -1
+        });
+
+        //Air filter clean
+        this.anims.create({
+            key: 'airFilterCleanBlink',
+            frames: this.anims.generateFrameNumbers('airFilter', {start: 0, end: 1}),
+            frameRate: 4,
+            repeat: -1
+        });
+
+        //Air filter dirty
+        this.anims.create({
+            key: 'airFilterDirtyBlink',
+            frames: this.anims.generateFrameNumbers('airFilter', {start: 2, end: 3}),
+            frameRate: 4,
+            repeat: -1
+        });
+
+        //Particle effect for generator exhaust
+        this.exhaustemitter = this.add.particles(775, 150, 'exhaust', {
+            speed: 50,
+            gravityX: 200,
+            scale: {start: 1, end: 0},
+            lifespan: 1000
+        });
+        this.exhaustemitter.pause();
 
         //Create new generator
         this.generator = new Generator(this, width/2, height/2);

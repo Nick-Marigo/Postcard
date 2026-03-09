@@ -9,6 +9,8 @@ class Checklist {
         this.lines = [];
 
         this.list = scene.add.image(x, y, 'checklist');
+
+        this.scene.add.text(50, 50, 'Check List', {fontSize: '36px', color: '#000'});
     }
 
     // Clears any existing tasks and creates a new list of tasks with hidden cross-out line for each one

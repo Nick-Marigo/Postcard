@@ -59,6 +59,7 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.holdProgress = 0;
         this.holdDuration = 6000;
         this.startupComplete = false;
+        this.ranOnce = false;
         this.startupSound = this.scene.sound.add('startup');
 
         //Starting up generator and plays startup sound
@@ -96,7 +97,7 @@ class Generator extends Phaser.GameObjects.Sprite {
         //create all images for airfilter state
 
         //Air filter dirty and clean
-        this.airFilterDirty = this.scene.add.sprite(this.generatorImage.x -161, this.generatorImage.y + 105, 'airFilter', 1).setInteractive().setOrigin(0.5, 0);
+        this.airFilterDirty = this.scene.add.sprite(this.generatorImage.x -161, this.generatorImage.y + 105, 'airFilter', 2).setInteractive().setOrigin(0.5, 0);
         this.airFilterClean = this.scene.add.sprite(550, 490, 'airFilter', 0).setInteractive().setOrigin(0.5, 0);
         //create targets needs to show where player needs to place x item
         this.targetairFilterDirty = this.scene.add.rectangle(550, 550, 60, 40, 0xffff000, 0.25).setVisible(false);
@@ -181,18 +182,22 @@ class BrokenState extends State {
         //Two steps for this state
         // 1. Turn key on until completion
         // 2. Drag from cover off of generator
-        if(generator.startupComplete) {
+        if(generator.startupComplete && !generator.ranOnce) {
+            generator.ranOnce = true;
             generator.disableKeyholeTask();
             generator.generatorCover.setInteractive();
             scene.input.setDraggable(generator.generatorCover);
             generator.keyhole.setVisible(false);
             generator.targetGeneratorCover.setVisible(true);
             scene.checklist.completeTask(0);
+            generator.generatorCover.play('generatorCoverBlink');
         }
 
         if(generator.brokenStep === 1) {
             generator.targetGeneratorCover.setVisible(false);
             scene.checklist.completeTask(1);
+            generator.generatorCover.stop();
+            generator.generatorCover.setFrame(0);
             generator.generatorFSM.transition('airFilter');
         }
 
@@ -249,6 +254,7 @@ class AirFilterState extends State {
                 generator.targetairFilterDirty.setVisible(true);
                 generator.airFilterCover.stop();
                 generator.airFilterCover.setFrame(0);
+                generator.airFilterDirty.play('airFilterDirtyBlink');
             }
             if(Phaser.Geom.Intersects.RectangleToRectangle(generator.airFilterCover.getBounds(), generator.targetairFilterCoverON.getBounds())) {
                 generator.airFilterCover.x = generator.targetairFilterCoverON.x
@@ -257,6 +263,8 @@ class AirFilterState extends State {
                 console.log("Air Filter Cover snapped into place");
                 generator.airFilterStep++;
                 generator.targetairFilterCoverON.setVisible(false);
+                generator.airFilterCover.stop();
+                generator.airFilterCover.setFrame(0);
             }
         }
 
@@ -270,6 +278,9 @@ class AirFilterState extends State {
                 generator.airFilterStep++;
                 generator.targetairFilterDirty.setVisible(false);
                 generator.targetairFilterClean.setVisible(true);
+                generator.airFilterDirty.stop();
+                generator.airFilterDirty.setFrame(2);
+                generator.airFilterClean.play('airFilterCleanBlink');
             }
         }
 
@@ -282,6 +293,9 @@ class AirFilterState extends State {
                 console.log("Air Filter Clean snapped into place");
                 generator.airFilterStep++;
                 generator.targetairFilterCoverON.setVisible(true);
+                generator.airFilterClean.stop();
+                generator.airFilterClean.setFrame(0);
+                generator.airFilterCover.play('airFilterCoverBlink');
             }
         }
 
