@@ -13,6 +13,9 @@ class PostcardGame extends Phaser.Scene {
         this.load.image('checklist', 'checklist.png');
         this.load.image('exhaust', 'exhaust.png');
 
+        //Sparkplug
+        this.load.spritesheet('sparkplug', '/Sparkplug.png', {frameWidth: 60, frameHeight: 30});
+
         this.load.path = "./assets/sounds/"
         this.load.audio('startup', 'startupSound.mp3');
     }
@@ -49,6 +52,14 @@ class PostcardGame extends Phaser.Scene {
         this.anims.create({
             key: 'airFilterDirtyBlink',
             frames: this.anims.generateFrameNumbers('airFilter', {start: 2, end: 3}),
+            frameRate: 4,
+            repeat: -1
+        });
+
+        //Sparkplug blink
+        this.anims.create({
+            key: 'sparkplugBlink',
+            frames: this.anims.generateFrameNumbers('sparkplug', {start: 0, end: 1}),
             frameRate: 4,
             repeat: -1
         });

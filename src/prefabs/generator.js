@@ -109,6 +109,11 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.targetairFilterCoverOFF = this.scene.add.rectangle(550, 625, 70, 80, 0xffff000, 0.25).setVisible(false);
         this.targetairFilterCoverON = this.scene.add.rectangle(this.generatorImage.x - 159, this.generatorImage.y + 91, 70, 80, 0xffff000, 0.25).setOrigin(0.5, 0).setVisible(false);
 
+        // Create all images for sparkplug state
+        this.sparkplug = this.scene.add.sprite(100, 100, 'sparkplug', 0).setInteractive();
+        
+
+
     }
 
     update(exhaustemitter) {
