@@ -24,6 +24,11 @@ class Generator extends Phaser.GameObjects.Sprite {
 
         //Create drag function so each gameobject will follow mouse movement
         scene.input.on('drag', (pointer, gameObject, dragX, dragY) => {
+
+            if(gameObject === this.socketWrench && this.sparkPlugStep >= 2) {
+                return;
+            }
+
             gameObject.x = dragX;
             gameObject.y = dragY;
         });
@@ -57,7 +62,7 @@ class Generator extends Phaser.GameObjects.Sprite {
         //varaibles needed for progressRing 
         this.isHoldingKey = false;
         this.holdProgress = 0;
-        this.holdDuration = 6000;
+        this.holdDuration = 500; //6000
         this.startupComplete = false;
         this.ranOnce = false;
         this.startupSound = this.scene.sound.add('startup');
@@ -88,6 +93,7 @@ class Generator extends Phaser.GameObjects.Sprite {
             }
         })
 
+
         //create all images for generator and parts
         this.generatorImage = this.scene.add.sprite(width / 2, 50, 'generator', 0).setOrigin(.5, 0);
         this.generatorCover = this.scene.add.sprite(width / 2, 50, 'generatorCover').setOrigin(.5, 0).setDepth(100);
@@ -100,7 +106,7 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.airFilterDirty = this.scene.add.sprite(this.generatorImage.x -161, this.generatorImage.y + 105, 'airFilter', 2).setInteractive().setOrigin(0.5, 0);
         this.airFilterClean = this.scene.add.sprite(550, 490, 'airFilter', 0).setInteractive().setOrigin(0.5, 0);
         //create targets needs to show where player needs to place x item
-        this.targetairFilterDirty = this.scene.add.rectangle(550, 550, 60, 40, 0xffff000, 0.25).setVisible(false);
+        this.targetairFilterDirty = this.scene.add.rectangle(550, 550, 60, 40, 0xffff00, 0.25).setVisible(false);
         this.targetairFilterClean = this.scene.add.rectangle(this.generatorImage.x - 161, this.generatorImage.y + 125, 60, 40, 0xffff000, 0.25).setVisible(false);
 
         //Air filter cover
@@ -109,14 +115,42 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.targetairFilterCoverOFF = this.scene.add.rectangle(550, 625, 70, 80, 0xffff000, 0.25).setVisible(false);
         this.targetairFilterCoverON = this.scene.add.rectangle(this.generatorImage.x - 159, this.generatorImage.y + 91, 70, 80, 0xffff000, 0.25).setOrigin(0.5, 0).setVisible(false);
 
+
+        // varaibles to turn wrench
+        this.turningWrench = false;
+        this.lastWrenchAngle = 0;
+        this.totalWrenchRotation = 0;
+        this.wrenchDirection = null;
+
         // Create all images for sparkplug state
-        this.sparkplug = this.scene.add.sprite(100, 100, 'sparkplug', 0).setInteractive();
+        this.sparkplug = this.scene.add.sprite(625, 525, 'sparkplug', 0).setInteractive();
+        this.targetsparkplug = this.scene.add.rectangle(525, 180, 60, 30, 0xffff00, 0.25).setVisible(false);
+        this.sparkplugDirty = this.scene.add.sprite(525, 180, 'sparkplug', 2).setInteractive().setVisible(false);
+        this.targetsparkplugDirty = this.scene.add.rectangle(625, 575, 60, 30, 0xffff00, 0.25).setVisible(false);
+        this.sparkplugCover = this.scene.add.sprite(530, 183, 'sparkplugCover', 0).setInteractive();
+        this.socketWrench = this.scene.add.sprite(800, 100, 'socketWrench', 0).setInteractive().setOrigin(0.15, 0.1);
+        this.targetsocketWrench = this.scene.add.rectangle(510, 183, 20, 20, 0xffff00, 0.25).setVisible(false);
+
+        //Input for turning socket wrench
+        this.socketWrench.on('pointerdown', (pointer) => {
+            if(this.sparkPlugStep === 2 || this.sparkPlugStep === 5) {
+
+                this.turningWrench = true;
+                this.lastWrenchAngle = Phaser.Math.Angle.Between(this.socketWrench.x, this.socketWrench.y, pointer.x, pointer.y);
+            }
+        });
+
+        this.scene.input.on('pointerup', () => {
+            this.turningWrench = false;
+        });
         
 
 
     }
 
     update(exhaustemitter) {
+
+        console.log(this.sparkPlugStep);
         
         //Checks if player is holding key and startup has not been completed. Will call drawProgressCircle to draw progessRing
         if(this.isHoldingKey && !this.startupComplete) {
@@ -137,6 +171,60 @@ class Generator extends Phaser.GameObjects.Sprite {
             }
         } else {
             exhaustemitter.emitting = false;
+        }
+
+        if(this.turningWrench && this.sparkPlugStep === 2) {
+            let pointer = this.scene.input.activePointer;
+
+            let currentAngle = Phaser.Math.Angle.Between(this.socketWrench.x, this.socketWrench.y, pointer.x, pointer.y);
+
+            let delta = currentAngle - this.lastWrenchAngle;
+
+            delta = Phaser.Math.Angle.Wrap(delta);
+
+            if(this.sparkPlugStep === 2 && this.wrenchDirection === 'ccw') {
+        
+                if(delta < 0) {
+                    this.totalWrenchRotation += Math.abs(delta);
+                }
+
+                this.socketWrench.rotation += delta;
+
+                if(this.totalWrenchRotation >= Math.PI * 2) {
+                    this.turningWrench = false;
+                    this.sparkPlugStep++;
+                    console.log("Socket wrench loosening complete");
+                    this.socketWrench.stop();
+                    this.socketWrench.setFrame(0);
+                    this.scene.checklist.completeTask(2);
+                    this.sparkplugDirty.setVisible(true);
+                    this.sparkplugDirty.play('sparkplugDirtyBlink');
+                    this.scene.input.setDraggable(this.sparkplugDirty);
+                    this.targetsparkplugDirty.setVisible(true);
+                }
+            } else if(this.sparkPlugStep === 5 && this.wrenchDirection === 'cw') {
+
+                if(delta > 0) {
+                    this.totalWrenchRotation += Math.abs(delta);
+                    this.socketWrench.rotation += delta;
+                }
+
+                if(this.totalWrenchRotation >= Math.PI * 2) {
+                    this.turningWrench = false;
+                    this.totalWrenchRotation = 0;
+                    this.sparkPlugStep++;
+                    console.log('Socket wrench tightening complete');
+                    this.socketWrench.stop();
+                    this.socketWrench.setFrame(0);
+                    this.scene.checklist.completeTask(5);
+
+                    this.sparkplugCover.setInteractive();
+                }
+
+            }
+
+            this.lastWrenchAngle = currentAngle;
+
         }
     }
 
@@ -343,9 +431,106 @@ class SparkPlugState extends State {
     enter(scene, generator){
         console.log("Enter sparkPlugState");
 
+        generator.sparkplugCover.play('sparkplugCoverBlink');
+
+        //Add new tasks to the task list
+        scene.checklist.setTasks([
+            'Remove spark plug cover',
+            'Move socket wrench over spark plug',
+            'Rotate socket wrench counter clock wise',
+            'Remove old spark plug',
+            'Replace spark plug',
+            'Rotate socket wrench clock wise',
+            'Replace spark plug cover'
+        ]);
+
+        generator.sparkplugCover.once('pointerdown', () => {
+            scene.tweens.add({
+                targets: generator.sparkplugCover,
+                x: 554,
+                duration: 250,
+                ease: 'Power2',
+                onComplete: () => {
+                    generator.sparkplugCover.x = 555;
+                    generator.sparkplugCover.disableInteractive();
+                    scene.checklist.completeTask(0);
+                    generator.totalWrenchRotation = 0;
+                    generator.turningWrench = false;
+                    generator.wrenchDirection = 'ccw';
+                    generator.sparkplugCover.stop();
+                    generator.sparkplugCover.setFrame(0);
+                    generator.sparkPlugStep++;
+                    generator.socketWrench.play('socketWrenchBlink');
+                    scene.input.setDraggable(generator.socketWrench);
+                    generator.targetsocketWrench.setVisible(true);
+                    console.log('Spark plug cover removed');
+                }
+            });
+        });
+
+    }
+
+    handleDrop(gameObject, generator) {
+
+        if(gameObject === generator.socketWrench && generator.sparkPlugStep === 1) {
+            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.socketWrench.getBounds(), generator.targetsocketWrench.getBounds())) {
+                generator.socketWrench.x = generator.targetsocketWrench.x;
+                generator.socketWrench.y = generator.targetsocketWrench.y;
+                //generator.socketWrench.stop();
+                //generator.socketWrench.setFrame(0);
+                generator.targetsocketWrench.setVisible(false);
+                generator.scene.input.setDraggable(generator.socketWrench, false);
+                generator.sparkPlugStep++;
+                console.log("Wrench placed");
+            }
+            
+        }
+
+        if(gameObject === generator.sparkplugDirty) {
+            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.sparkplugDirty.getBounds(), generator.targetsparkplugDirty.getBounds())) {
+                generator.sparkplugDirty.x = generator.targetsparkplugDirty.x;
+                generator.sparkplugDirty.y = generator.targetsparkplugDirty.y;
+                generator.sparkplugDirty.stop();
+                generator.sparkplugDirty.setFrame(2);
+                generator.sparkplugDirty.disableInteractive();
+                generator.scene.input.setDraggable(generator.sparkplug);
+                generator.targetsparkplugDirty.setVisible(false);
+                generator.sparkPlugStep++;
+                console.log("Spark plug dirty placed");
+                generator.sparkplug.play('sparkplugBlink');
+                generator.targetsparkplug.setVisible(true);
+            }
+        }
+
+        if(gameObject === generator.sparkplug) {
+            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.sparkplug.getBounds(), generator.targetsparkplug.getBounds())) {
+                generator.sparkplug.setVisible(false);
+                generator.scene.input.setDraggable(generator.sparkplug);
+                generator.targetsparkplug.setVisible(false);
+                generator.socketWrench.setInteractive();
+                generator.sparkPlugStep++;
+                console.log("Spark plug clean placed");
+                generator.socketWrench.play('socketWrenchBlink');
+                generator.totalWrenchRotation = 0;
+                generator.turningWrench = false;
+                generator.wrenchDirection = 'cw';
+
+            }
+        }
+
     }
 
     execute(scene, generator) {
+
+        if(generator.sparkPlugStep === 2) {
+            scene.checklist.completeTask(1);
+        } else if (generator.sparkPlugStep === 3) {
+            scene.checklist.completeTask(2);
+        } else if (generator.sparkPlugStep === 4) {
+            scene.checklist.completeTask(3);
+        } else if (generator.sparkPlugStep === 5) {
+            scene.checklist.completeTask(4);
+        }
 
     }
 }

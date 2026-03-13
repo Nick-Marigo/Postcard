@@ -15,6 +15,8 @@ class PostcardGame extends Phaser.Scene {
 
         //Sparkplug
         this.load.spritesheet('sparkplug', '/Sparkplug.png', {frameWidth: 60, frameHeight: 30});
+        this.load.spritesheet('sparkplugCover', '/SparkplugCover.png', {frameWidth: 30, frameHeight: 10});
+        this.load.spritesheet('socketWrench', 'SocketWrench.png', {frameWidth: 26, frameHeight: 106});
 
         this.load.path = "./assets/sounds/"
         this.load.audio('startup', 'startupSound.mp3');
@@ -22,6 +24,7 @@ class PostcardGame extends Phaser.Scene {
 
     create() {
 
+        /*
         //Blinking animations for...
 
         //Air filter Cover
@@ -63,6 +66,30 @@ class PostcardGame extends Phaser.Scene {
             frameRate: 4,
             repeat: -1
         });
+
+        //Sparkplug blink
+        this.anims.create({
+            key: 'sparkplugCoverBlink',
+            frames: this.anims.generateFrameNumbers('sparkplugCover', {start: 0, end: 1}),
+            frameRate: 4,
+            repeat: -1
+        });
+        */
+
+        let animsName = ['airFilterCoverBlink', 'generatorCoverBlink', 'airFilterCleanBlink', 'airFilterDirtyBlink', 'sparkplugBlink', 'sparkplugDirtyBlink', 'sparkplugCoverBlink', 'socketWrenchBlink'];
+        let animsString = ['airFilterCover', 'generatorCover', 'airFilter', 'airFilter', 'sparkplug', 'sparkplug', 'sparkplugCover', 'socketWrench'];
+        let animsFrames = [[0, 1], [0, 1], [0, 1], [2, 3], [0, 1], [2, 3], [0, 1], [0, 1]];
+
+        for(let i = 0; i < animsName.length; i++) {
+
+            this.anims.create({
+                key: animsName[i],
+                frames: this.anims.generateFrameNumbers(animsString[i], {start: animsFrames[i][0], end: animsFrames[i][1]}),
+                frameRate: 4,
+                repeat: -1
+            });
+
+        }
 
         //Particle effect for generator exhaust
         this.exhaustemitter = this.add.particles(775, 150, 'exhaust', {
