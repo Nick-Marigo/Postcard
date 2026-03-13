@@ -149,8 +149,6 @@ class Generator extends Phaser.GameObjects.Sprite {
     }
 
     update(exhaustemitter) {
-
-        console.log(this.sparkPlugStep);
         
         //Checks if player is holding key and startup has not been completed. Will call drawProgressCircle to draw progessRing
         if(this.isHoldingKey && !this.startupComplete) {
@@ -173,7 +171,7 @@ class Generator extends Phaser.GameObjects.Sprite {
             exhaustemitter.emitting = false;
         }
 
-        if(this.turningWrench && this.sparkPlugStep === 2) {
+        if(this.turningWrench && (this.sparkPlugStep === 2 || this.sparkPlugStep === 5)) {
             let pointer = this.scene.input.activePointer;
 
             let currentAngle = Phaser.Math.Angle.Between(this.socketWrench.x, this.socketWrench.y, pointer.x, pointer.y);
@@ -219,7 +217,29 @@ class Generator extends Phaser.GameObjects.Sprite {
                     this.scene.checklist.completeTask(5);
 
                     this.sparkplugCover.setInteractive();
+                    this.sparkplugCover.play('sparkplugCoverBlink');
                 }
+
+                this.sparkplugCover.once('pointerdown', () => {
+                    this.scene.tweens.add({
+                        targets: this.sparkplugCover,
+                        x: 554,
+                        duration: 250,
+                        ease: 'Power2',
+                        onComplete: () => {
+                            this.sparkplugCover.x = 530;
+                            this.sparkplugCover.disableInteractive();
+                            this.scene.checklist.completeTask(0);
+                            this.sparkplugCover.stop();
+                            this.sparkplugCover.setFrame(0);
+                            this.sparkPlugStep = 7;
+                            //generator.socketWrench.play('socketWrenchBlink');
+                            //scene.input.setDraggable(generator.socketWrench);
+                            //generator.targetsocketWrench.setVisible(true);
+                            console.log('Spark plug cover replaced');
+                        }
+                    });
+                });
 
             }
 
@@ -476,10 +496,11 @@ class SparkPlugState extends State {
             if(Phaser.Geom.Intersects.RectangleToRectangle(generator.socketWrench.getBounds(), generator.targetsocketWrench.getBounds())) {
                 generator.socketWrench.x = generator.targetsocketWrench.x;
                 generator.socketWrench.y = generator.targetsocketWrench.y;
-                //generator.socketWrench.stop();
-                //generator.socketWrench.setFrame(0);
                 generator.targetsocketWrench.setVisible(false);
                 generator.scene.input.setDraggable(generator.socketWrench, false);
+                generator.totalWrenchRotation = 0;
+                generator.turningWrench = false;
+                generator.wrenchDirection = 'ccw';
                 generator.sparkPlugStep++;
                 console.log("Wrench placed");
             }
@@ -530,6 +551,9 @@ class SparkPlugState extends State {
             scene.checklist.completeTask(3);
         } else if (generator.sparkPlugStep === 5) {
             scene.checklist.completeTask(4);
+        } else if (generator.sparkPlugStep === 7) {
+            scene.checklist.completeTask(5);
+            generator.generatorFSM.transition('oil');
         }
 
     }
