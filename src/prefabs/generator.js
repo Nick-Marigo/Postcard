@@ -671,24 +671,6 @@ class SparkPlugState extends State {
             
         }
 
-        /*if(gameObject === generator.sparkplug) {
-            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.sparkplug.getBounds(), generator.targetsparkplug.getBounds())) {
-                generator.sparkplug.setVisible(false);
-                generator.scene.input.setDraggable(generator.sparkplug);
-                generator.targetsparkplug.setVisible(false);
-                generator.socketWrench.setInteractive();
-                generator.sparkPlugStep++;
-                console.log("Spark plug clean placed");
-                generator.socketWrench.play('socketWrenchBlink');
-                generator.totalWrenchRotation = 0;
-                generator.turningWrench = false;
-                generator.wrenchDirection = 'cw';
-                generator.turnArrow.setVisible(true);
-                generator.turnArrow.setFlipX(true);
-
-            }
-        }*/
-
     }
 
     execute(scene, generator) {
