@@ -19,6 +19,11 @@ class PostcardGame extends Phaser.Scene {
         this.load.spritesheet('sparkplugCover', '/SparkplugCover.png', {frameWidth: 30, frameHeight: 10});
         this.load.spritesheet('socketWrench', 'SocketWrench.png', {frameWidth: 26, frameHeight: 106});
 
+        //Oil
+        this.load.spritesheet('oilDrainPan', 'oilDrainPan.png', {frameWidth: 80, frameHeight: 100});
+        this.load.spritesheet('wrench', 'wrench.png', {frameWidth: 30, frameHeight: 106});
+        this.load.spritesheet('bolt', 'bolt.png', {frameWidth: 14, frameHeight: 14});
+
         this.load.path = "./assets/sounds/"
         this.load.audio('startup', 'startupSound.mp3');
     }
@@ -77,9 +82,9 @@ class PostcardGame extends Phaser.Scene {
         });
         */
 
-        let animsName = ['airFilterCoverBlink', 'generatorCoverBlink', 'airFilterCleanBlink', 'airFilterDirtyBlink', 'sparkplugBlink', 'sparkplugDirtyBlink', 'sparkplugCoverBlink', 'socketWrenchBlink', 'turnArrowBlink'];
-        let animsString = ['airFilterCover', 'generatorCover', 'airFilter', 'airFilter', 'sparkplug', 'sparkplug', 'sparkplugCover', 'socketWrench', 'turnArrow'];
-        let animsFrames = [[0, 1], [0, 1], [0, 1], [2, 3], [0, 1], [2, 3], [0, 1], [0, 1], [0, 1]];
+        let animsName = ['airFilterCoverBlink', 'generatorCoverBlink', 'airFilterCleanBlink', 'airFilterDirtyBlink', 'sparkplugBlink', 'sparkplugDirtyBlink', 'sparkplugCoverBlink', 'socketWrenchBlink', 'turnArrowBlink', 'oilDrainPanBlink', 'wrenchBlink', 'boltBlink'];
+        let animsString = ['airFilterCover', 'generatorCover', 'airFilter', 'airFilter', 'sparkplug', 'sparkplug', 'sparkplugCover', 'socketWrench', 'turnArrow', 'oilDrainPan', 'wrench', 'bolt'];
+        let animsFrames = [[0, 1], [0, 1], [0, 1], [2, 3], [0, 1], [2, 3], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]];
 
         for(let i = 0; i < animsName.length; i++) {
 

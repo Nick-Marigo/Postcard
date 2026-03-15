@@ -29,6 +29,10 @@ class Generator extends Phaser.GameObjects.Sprite {
                 return;
             }
 
+            if(gameObject === this.wrench && (this.oilStep === 2)) {
+                return;
+            }
+
             gameObject.x = dragX;
             gameObject.y = dragY;
         });
@@ -145,6 +149,32 @@ class Generator extends Phaser.GameObjects.Sprite {
 
         this.scene.input.on('pointerup', () => {
             this.turningWrench = false;
+            this.turningOilWrench = false;
+        });
+
+        //varaibles to turn oil wrench
+        this.turningOilWrench = false;
+        this.lastOilWrenchAngle = 0;
+        this.totalOilWrenchRotation = 0;
+        this.oilWrenchDirection = null;
+
+        // Create all images for oil state
+        this.bolt = this.scene.add.sprite(625, 300, 'bolt', 0);
+        this.targetbolt = this.scene.add.rectangle(625, 300, 14, 14, 0xffff00, 0.25).setVisible(false);
+        this.targetboltTwo = this.scene.add.rectangle(900, 300, 14, 14, 0xffff00, 0.25).setVisible(false);
+        this.wrench = this.scene.add.sprite(850, 100, 'wrench', 0).setInteractive().setOrigin(0.15, 0.1).setDepth(50);
+        this.targetwrench = this.scene.add.rectangle(625, 300, 14, 14, 0xffff00, 0.25).setVisible(false);
+        this.targetwrenchTwo = this.scene.add.rectangle(850, 100, 30, 106, 0xffff00, 0.25).setVisible(false);
+        this.oilDrainPan = this.scene.add.sprite(850, 500, 'oilDrainPan', 0).setInteractive();
+        this.targetoilDrainPan = this.scene.add.rectangle(625, 400, 50, 50, 0xffff00, 0.25).setVisible(false);
+
+        //Input for turning wrench
+        this.wrench.on('pointerdown', (pointer) => {
+            if(this.oilStep === 2) {
+
+                this.turningOilWrench = true;
+                this.lastOilWrenchAngle = Phaser.Math.Angle.Between(this.wrench.x, this.wrench.y, pointer.x, pointer.y);
+            }
         });
         
 
@@ -216,16 +246,11 @@ class Generator extends Phaser.GameObjects.Sprite {
                     this.totalWrenchRotation = 0;
                     this.sparkPlugStep++;
                     console.log('Socket wrench tightening complete');
-                    //this.socketWrench.stop();
-                    //this.socketWrench.setFrame(0);
                     this.scene.checklist.completeTask(5);
                     this.socketWrench.setInteractive();
                     this.scene.input.setDraggable(this.socketWrench, true);
                     this.targetsocketWrenchTwo.setVisible(true);
                     this.turnArrow.setVisible(false);
-
-                    //this.sparkplugCover.setInteractive();
-                    //this.sparkplugCover.play('sparkplugCoverBlink');
                 }
 
             }
@@ -233,6 +258,37 @@ class Generator extends Phaser.GameObjects.Sprite {
             this.lastWrenchAngle = currentAngle;
 
         }
+
+        if(this.turningOilWrench && (this.oilStep === 2)) {
+            let pointer = this.scene.input.activePointer;
+
+            let currentAngle = Phaser.Math.Angle.Between(this.wrench.x, this.wrench.y, pointer.x, pointer.y);
+
+            let delta = currentAngle - this.lastOilWrenchAngle;
+
+            delta = Phaser.Math.Angle.Wrap(delta);
+
+            if(this.oilStep === 2 && this.oilWrenchDirection === 'ccw') {
+                if(delta < 0) {
+                    this.totalOilWrenchRotation += Math.abs(delta);
+                    this.wrench.rotation += delta;
+                }
+
+                if(this.totalOilWrenchRotation >= Math.PI * 2) {
+                    this.turningOilWrench = false;
+                    this.totalOilWrenchRotation = 0;
+                    this.oilStep++;
+                    this.turnArrow.setVisible(false);
+                    console.log("Bolt loosened");
+                    this.scene.checklist.completeTask(2);
+                }
+            }
+
+            this.lastOilWrenchAngle = currentAngle;
+
+        }
+
+        console.log(this.oilStep);
     }
 
     //Draws a circular progress ring around the key hole based on how close the player is to completion
@@ -593,11 +649,60 @@ class OilState extends State {
     enter(scene, generator){
         console.log("Enter OilState");
 
+        generator.oilDrainPan.play('oilDrainPanBlink');
+        generator.scene.input.setDraggable(generator.oilDrainPan);
+        generator.targetoilDrainPan.setVisible(true);
+
         //Add new tasks to the task list
         scene.checklist.setTasks([
+            'Move oil drain pan into place',
             'Move wrench to bolt',
+            'Rotate wrench counter clockwise',
+            'Let oil drain',
+
             
         ]);
+
+    }
+
+    handleDrop(gameObject, generator) {
+
+        if(gameObject === generator.oilDrainPan) {
+            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.oilDrainPan.getBounds(), generator.targetoilDrainPan.getBounds())) {
+                generator.targetoilDrainPan.setVisible(false);
+                generator.oilDrainPan.disableInteractive();
+                generator.oilDrainPan.x = generator.targetoilDrainPan.x;
+                generator.oilDrainPan.y = generator.targetoilDrainPan.y;
+                generator.oilDrainPan.stop();
+                generator.oilDrainPan.setFrame(2);
+                generator.targetwrench.setVisible(true);
+                generator.scene.input.setDraggable(generator.wrench);
+                generator.wrench.play('wrenchBlink');
+                generator.oilStep++;
+                console.log("Oil drain pan placed");
+
+            }
+        }
+
+        if(gameObject === generator.wrench && generator.oilStep === 1) {
+            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.wrench.getBounds(), generator.targetwrench.getBounds())) {
+                generator.targetwrench.setVisible(false);
+                generator.wrench.x = generator.targetwrench.x - 10;
+                generator.wrench.y = generator.targetwrench.y - 5;
+                generator.wrench.stop();
+                generator.wrench.setFrame(0);
+                generator.oilStep++;
+                generator.scene.input.setDraggable(generator.wrench, false);
+                generator.totalOilWrenchRotation = 0;
+                generator.turningOilWrench = false;
+                generator.OilwrenchDirection = 'ccw';
+                generator.turnArrow.x = 625;
+                generator.turnArrow.y = 300;
+                generator.turnArrow.setVisible(true);
+                generator.turnArrow.setFlipX(false);
+                console.log("Wrench placed");
+            }
+        }
 
     }
 
@@ -613,6 +718,10 @@ class FixedState extends State {
     }
 
     execute(scene, generator) {
+
+        if(generator.oilStep === 1) {
+            scene.checklist.completeTask(0);
+        }
 
     }
 }
