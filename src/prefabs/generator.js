@@ -29,7 +29,7 @@ class Generator extends Phaser.GameObjects.Sprite {
                 return;
             }
 
-            if(gameObject === this.wrench && (this.oilStep === 2)) {
+            if(gameObject === this.wrench && (this.oilStep === 2 || this.oilStep === 4)) {
                 return;
             }
 
@@ -167,10 +167,19 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.targetwrenchTwo = this.scene.add.rectangle(850, 100, 30, 106, 0xffff00, 0.25).setVisible(false);
         this.oilDrainPan = this.scene.add.sprite(850, 500, 'oilDrainPan', 0).setInteractive();
         this.targetoilDrainPan = this.scene.add.rectangle(625, 400, 50, 50, 0xffff00, 0.25).setVisible(false);
+        this.funnel = this.scene.add.sprite(920, 500, 'funnel', 0).setInteractive().setOrigin(0.5, 1);
+        this.targetfunnel = this.scene.add.rectangle(680, 235, 50, 50, 0xffff00, 0.25).setVisible(false);
+        this.targetfunnelTwo = this.scene.add.rectangle(920, 500, 50, 100, 0xffff00, 0.25).setVisible(false);
+        this.oil = this.scene.add.sprite(850, 650, 'oil', 0).setInteractive();
+        this.targetoil = this.scene.add.rectangle(765, 100, 50, 50, 0xffff00, 0.25).setVisible(false);
+        this.targetoilTwo = this.scene.add.rectangle(850, 650, 50, 50, 0xffff00, 0.25).setVisible(false);
+        this.oilCap = this.scene.add.sprite(680, 235, 'oilCap', 0).setInteractive();
+        this.targetoilCap = this.scene.add.rectangle(1000, 600, 26, 26, 0xffff00, 0.25).setVisible(false);
+        this.targetoilCapTwo = this.scene.add.rectangle(680, 235, 26, 26, 0xffff00, 0.25).setVisible(false);
 
         //Input for turning wrench
         this.wrench.on('pointerdown', (pointer) => {
-            if(this.oilStep === 2) {
+            if(this.oilStep === 2 || this.oilStep === 4) {
 
                 this.turningOilWrench = true;
                 this.lastOilWrenchAngle = Phaser.Math.Angle.Between(this.wrench.x, this.wrench.y, pointer.x, pointer.y);
@@ -259,7 +268,7 @@ class Generator extends Phaser.GameObjects.Sprite {
 
         }
 
-        if(this.turningOilWrench && (this.oilStep === 2)) {
+        if(this.turningOilWrench && (this.oilStep === 2 || this.oilStep === 4)) {
             let pointer = this.scene.input.activePointer;
 
             let currentAngle = Phaser.Math.Angle.Between(this.wrench.x, this.wrench.y, pointer.x, pointer.y);
@@ -281,6 +290,45 @@ class Generator extends Phaser.GameObjects.Sprite {
                     this.turnArrow.setVisible(false);
                     console.log("Bolt loosened");
                     this.scene.checklist.completeTask(2);
+                    this.wrench.stop();
+                    this.wrench.setFrame(0);
+
+                    this.wrench.x = 850;
+                    this.wrench.y = 100;
+                    this.scene.dirtyOilemitter.emitting = true;
+                    this.scene.time.delayedCall(5000, () => {
+                        this.scene.dirtyOilemitter.stop();
+                        console.log("Oil finished draining");
+                        this.oilStep++;
+                        this.scene.checklist.completeTask(3);
+                        this.wrench.x = this.targetwrench.x - 10;
+                        this.wrench.y = this.targetwrench.y - 5;
+                        this.wrench.play('wrenchBlink');
+                        this.turnArrow.setVisible(true);
+                        this.turnArrow.setFlipX(true);
+                        this.totalOilWrenchRotation = 0;
+                        this.turningOilWrench = false;
+                        this.oilWrenchDirection = 'cw';
+                    })
+                }
+            }
+
+            if(this.oilStep === 4 && this.oilWrenchDirection === 'cw') {
+                if(delta > 0) {
+                    this.totalOilWrenchRotation += Math.abs(delta);
+                    this.wrench.rotation += delta;
+                }
+
+                if(this.totalOilWrenchRotation >= Math.PI * 2) {
+                    this.turningOilWrench = false;
+                    this.totalOilWrenchRotation = 0;
+                    this.oilStep++;
+                    this.turnArrow.setVisible(false);
+                    console.log("Bolt tightened ");
+                    this.scene.checklist.completeTask(4);
+                    this.wrench.play('wrenchBlink');
+                    this.scene.input.setDraggable(this.wrench, true);
+                    this.targetwrenchTwo.setVisible(true);
                 }
             }
 
@@ -623,6 +671,24 @@ class SparkPlugState extends State {
             
         }
 
+        /*if(gameObject === generator.sparkplug) {
+            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.sparkplug.getBounds(), generator.targetsparkplug.getBounds())) {
+                generator.sparkplug.setVisible(false);
+                generator.scene.input.setDraggable(generator.sparkplug);
+                generator.targetsparkplug.setVisible(false);
+                generator.socketWrench.setInteractive();
+                generator.sparkPlugStep++;
+                console.log("Spark plug clean placed");
+                generator.socketWrench.play('socketWrenchBlink');
+                generator.totalWrenchRotation = 0;
+                generator.turningWrench = false;
+                generator.wrenchDirection = 'cw';
+                generator.turnArrow.setVisible(true);
+                generator.turnArrow.setFlipX(true);
+
+            }
+        }*/
+
     }
 
     execute(scene, generator) {
@@ -659,8 +725,14 @@ class OilState extends State {
             'Move wrench to bolt',
             'Rotate wrench counter clockwise',
             'Let oil drain',
-
-            
+            'Rotate wrench clockwise',
+            'Move wrench back',
+            'Take off oil cap',
+            'Place funnel into place',
+            'Pour new oil into generator',
+            'Put oil back',
+            'Take out funnel',
+            'Replace oil cap'
         ]);
 
     }
@@ -689,13 +761,12 @@ class OilState extends State {
                 generator.targetwrench.setVisible(false);
                 generator.wrench.x = generator.targetwrench.x - 10;
                 generator.wrench.y = generator.targetwrench.y - 5;
-                generator.wrench.stop();
-                generator.wrench.setFrame(0);
                 generator.oilStep++;
                 generator.scene.input.setDraggable(generator.wrench, false);
+                generator.wrench.setInteractive();
                 generator.totalOilWrenchRotation = 0;
                 generator.turningOilWrench = false;
-                generator.OilwrenchDirection = 'ccw';
+                generator.oilWrenchDirection = 'ccw';
                 generator.turnArrow.x = 625;
                 generator.turnArrow.y = 300;
                 generator.turnArrow.setVisible(true);
@@ -704,9 +775,202 @@ class OilState extends State {
             }
         }
 
+        if(generator.oilStep === 3) {
+            generator.scene.time.addEvent({
+                delay: 5000,
+                callback: () => {
+                    generator.scene.dirtyOil
+                },
+                callbackScope: this,
+                loop: false
+            })
+            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.wrench.getBounds(), generator.targetwrenchTwo.getBounds())) {
+                generator.targetwrench.setVisible(false);
+                generator.wrench.x = generator.targetwrenchTwo.x - 10;
+                generator.wrench.y = generator.targetwrenchTwo.y - 5;
+                generator.oilStep++;
+                generator.scene.input.setDraggable(generator.wrench, false);
+                generator.wrench.setInteractive();
+                console.log("Wrench placed");
+            }
+        }
+
+        if(gameObject === generator.wrench && generator.oilStep === 5) {
+            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.wrench.getBounds(), generator.targetwrenchTwo.getBounds())) {
+                generator.targetwrenchTwo.setVisible(false);
+                generator.wrench.x = generator.targetwrenchTwo.x - 10;
+                generator.wrench.y = generator.targetwrenchTwo.y - 5;
+                generator.oilStep++;
+                generator.wrench.disableInteractive();
+                generator.wrench.stop();
+                generator.wrench.setFrame(0);
+                console.log("Wrench placed");
+                generator.oilDrainPan.x = 850;
+                generator.oilDrainPan.y = 500;
+                generator.oilDrainPan.setFrame(0);
+                generator.oilCap.play('oilCapBlink');
+                generator.targetoilCap.setVisible(true);
+                generator.scene.input.setDraggable(generator.oilCap);
+            }
+        }
+
+        if(gameObject === generator.oilCap && generator.oilStep === 6) {
+            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.oilCap.getBounds(), generator.targetoilCap.getBounds())) {
+                generator.targetoilCap.setVisible(false);
+                generator.oilCap.x = generator.targetoilCap.x - 10;
+                generator.oilCap.y = generator.targetoilCap.y - 5;
+                generator.oilStep++;
+                generator.oilCap.disableInteractive();
+                generator.oilCap.stop();
+                generator.oilCap.setFrame(0);
+                console.log("Oil cap placed");
+                generator.funnel.play('funnelBlink');
+                generator.targetfunnel.setVisible(true);
+                generator.scene.input.setDraggable(generator.funnel);
+                
+            }
+        }
+
+        if(gameObject === generator.funnel && generator.oilStep === 7) {
+            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.funnel.getBounds(), generator.targetfunnel.getBounds())) {
+                generator.targetfunnel.setVisible(false);
+                generator.funnel.x = generator.targetfunnel.x;
+                generator.funnel.y = generator.targetfunnel.y + 15;
+                generator.oilStep++;
+                generator.funnel.disableInteractive();
+                generator.funnel.stop();
+                generator.funnel.setFrame(0);
+                console.log("Funnel placed");
+                generator.oil.play('oilBlink');
+                generator.targetoil.setVisible(true);
+                generator.scene.input.setDraggable(generator.oil);
+                
+            }
+        }
+
+        if(gameObject === generator.oil && generator.oilStep === 8) {
+            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.oil.getBounds(), generator.targetoil.getBounds())) {
+                generator.targetoil.setVisible(false);
+                generator.oil.x = generator.targetoil.x;
+                generator.oil.y = generator.targetoil.y;
+                generator.oilStep++;
+                generator.oil.stop();
+                generator.oil.setFrame(0);
+                console.log("Oil placed");
+                //generator.targetoil.setVisible(true);
+
+                generator.oil.setOrigin(0.2, 0.85);
+
+                generator.scene.tweens.add({
+                    targets: generator.oil,
+                    angle: -90,
+                    duration: 500,
+                    ease: 'Power2',
+                    onComplete: () => {
+                        console.log("Oil pouring");
+
+                        //generator.oilStep++;
+                        generator.scene.cleanOilemitter.emitting = true;
+
+                        generator.scene.time.delayedCall(5000, () => {
+                            generator.scene.cleanOilemitter.emitting = false;
+                            console.log("Finished pouring oil");
+
+                            generator.scene.tweens.add({
+                                targets: generator.oil,
+                                angle: 0,
+                                duration: 300,
+                                ease: 'Power2'
+                            });
+
+                            generator.oil.play('oilBlink');
+                            generator.targetoilTwo.setVisible(true);
+                           
+                        });
+
+                    }
+                });
+                
+            }
+        }
+
+        if(gameObject === generator.oil && generator.oilStep === 9) {
+            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.oil.getBounds(), generator.targetoilTwo.getBounds())) {
+                generator.targetoilTwo.setVisible(false);
+                generator.oil.x = generator.targetoilTwo.x;
+                generator.oil.y = generator.targetoilTwo.y;
+                generator.oilStep++;
+                generator.oil.stop();
+                generator.oil.setFrame(0);
+                console.log("Oil placed");
+                generator.targetfunnelTwo.setVisible(true);
+                generator.funnel.setInteractive();
+                generator.scene.input.setDraggable(generator.funnel);
+                generator.funnel.play('funnelBlink');
+                
+            }
+        }
+
+        if(gameObject === generator.funnel && generator.oilStep === 10) {
+            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.funnel.getBounds(), generator.targetfunnelTwo.getBounds())) {
+                generator.targetfunnelTwo.setVisible(false);
+                generator.funnel.x = generator.targetfunnelTwo.x;
+                generator.funnel.y = generator.targetfunnelTwo.y + 15;
+                generator.oilStep++;
+                generator.funnel.disableInteractive();
+                generator.funnel.stop();
+                generator.funnel.setFrame(0);
+                console.log("Funnel placed");
+                generator.oilCap.play('oilCapBlink');
+                generator.targetoilCapTwo.setVisible(true);
+                generator.oilCap.setInteractive();
+                generator.scene.input.setDraggable(generator.oilCap);
+                
+            }
+        }
+
+        if(gameObject === generator.oilCap && generator.oilStep === 11) {
+            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.oilCap.getBounds(), generator.targetoilCapTwo.getBounds())) {
+                generator.targetoilCapTwo.setVisible(false);
+                generator.oilCap.x = 680;
+                generator.oilCap.y = 235;
+                generator.oilStep++;
+                generator.oilCap.disableInteractive();
+                generator.oilCap.stop();
+                generator.oilCap.setFrame(0);
+                console.log("Oil cap placed");
+                //generator.funnel.play('funnelBlink');
+                //generator.targetfunnel.setVisible(true);
+                //generator.scene.input.setDraggable(generator.funnel);
+                
+            }
+        }
+
     }
 
     execute(scene, generator) {
+
+        if(generator.oilStep === 1) {
+            scene.checklist.completeTask(0);
+        } else if (generator.oilStep === 2) {
+            scene.checklist.completeTask(1);
+        } else if (generator.oilStep === 6) {
+            scene.checklist.completeTask(5);
+        } else if (generator.oilStep === 7) {
+            scene.checklist.completeTask(6);
+        } else if (generator.oilStep === 8) {
+            scene.checklist.completeTask(7);
+        } else if (generator.oilStep === 9) {
+            scene.checklist.completeTask(8);
+        } else if (generator.oilStep === 10) {
+            scene.checklist.completeTask(9);
+        } else if (generator.oilStep === 11) {
+            scene.checklist.completeTask(10);
+        } else if (generator.oilStep === 12) {
+            scene.checklist.completeTask(1);
+            generator.generatorFSM.transition('fixed');
+        }
+
 
     }
 }
@@ -715,13 +979,14 @@ class FixedState extends State {
     enter(scene, generator){
         console.log("Enter FixedState");
 
+        //Add new tasks to the task list
+        scene.checklist.setTasks([
+            'Havent started this state yet'
+        ]);
+
     }
 
     execute(scene, generator) {
-
-        if(generator.oilStep === 1) {
-            scene.checklist.completeTask(0);
-        }
 
     }
 }

@@ -23,6 +23,11 @@ class PostcardGame extends Phaser.Scene {
         this.load.spritesheet('oilDrainPan', 'oilDrainPan.png', {frameWidth: 80, frameHeight: 100});
         this.load.spritesheet('wrench', 'wrench.png', {frameWidth: 30, frameHeight: 106});
         this.load.spritesheet('bolt', 'bolt.png', {frameWidth: 14, frameHeight: 14});
+        this.load.image('dirtyOil', 'dirtyOil.png');
+        this.load.image('cleanOil', 'cleanOil.png');
+        this.load.spritesheet('oilCap', 'oilcap.png', {frameWidth: 26, frameHeight: 26});
+        this.load.spritesheet('funnel', 'funnel.png', {frameWidth: 50, frameHeight: 100});
+        this.load.spritesheet('oil', 'oil.png', {frameWidth: 80, frameHeight: 100});
 
         this.load.path = "./assets/sounds/"
         this.load.audio('startup', 'startupSound.mp3');
@@ -82,9 +87,9 @@ class PostcardGame extends Phaser.Scene {
         });
         */
 
-        let animsName = ['airFilterCoverBlink', 'generatorCoverBlink', 'airFilterCleanBlink', 'airFilterDirtyBlink', 'sparkplugBlink', 'sparkplugDirtyBlink', 'sparkplugCoverBlink', 'socketWrenchBlink', 'turnArrowBlink', 'oilDrainPanBlink', 'wrenchBlink', 'boltBlink'];
-        let animsString = ['airFilterCover', 'generatorCover', 'airFilter', 'airFilter', 'sparkplug', 'sparkplug', 'sparkplugCover', 'socketWrench', 'turnArrow', 'oilDrainPan', 'wrench', 'bolt'];
-        let animsFrames = [[0, 1], [0, 1], [0, 1], [2, 3], [0, 1], [2, 3], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]];
+        let animsName = ['airFilterCoverBlink', 'generatorCoverBlink', 'airFilterCleanBlink', 'airFilterDirtyBlink', 'sparkplugBlink', 'sparkplugDirtyBlink', 'sparkplugCoverBlink', 'socketWrenchBlink', 'turnArrowBlink', 'oilDrainPanBlink', 'wrenchBlink', 'boltBlink', 'oilBlink', 'oilCapBlink', 'funnelBlink'];
+        let animsString = ['airFilterCover', 'generatorCover', 'airFilter', 'airFilter', 'sparkplug', 'sparkplug', 'sparkplugCover', 'socketWrench', 'turnArrow', 'oilDrainPan', 'wrench', 'bolt', 'oil', 'oilCap', 'funnel'];
+        let animsFrames = [[0, 1], [0, 1], [0, 1], [2, 3], [0, 1], [2, 3], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]];
 
         for(let i = 0; i < animsName.length; i++) {
 
@@ -105,6 +110,25 @@ class PostcardGame extends Phaser.Scene {
             lifespan: 1000,
             emitting: false
         });
+
+        //Particle effect for dirty oil
+        this.dirtyOilemitter = this.add.particles(625, 300, 'dirtyOil', {
+            speed: 10,
+            gravityY: 100,
+            lifespan: 1200,
+            emitting: false
+        });
+
+        //Particle effect for clean oil
+        this.cleanOilemitter = this.add.particles(685, 100, 'cleanOil', {
+            speed: 10,
+            gravityY: 100,
+            lifespan: 1000,
+            emitting: false
+        });
+
+        this.dirtyOilemitter.setDepth(50);
+        this.cleanOilemitter.setDepth(50);
 
         //Create new generator
         this.generator = new Generator(this, width/2, height/2);
