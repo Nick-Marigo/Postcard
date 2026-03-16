@@ -4,7 +4,7 @@ class PostcardGame extends Phaser.Scene {
     }
 
     preload() {
-        this.load.path = "./assets/"
+        this.load.path = "./assets/art/"
         this.load.image("square", "Square.png");
         this.load.spritesheet('turnArrow', 'turnArrow.png', {frameWidth: 120, frameHeight: 120});
         this.load.spritesheet('generator', 'generator.png', {frameWidth: 540, frameHeight: 360})
@@ -31,12 +31,16 @@ class PostcardGame extends Phaser.Scene {
         this.load.spritesheet('funnel', 'funnel.png', {frameWidth: 50, frameHeight: 100});
         this.load.spritesheet('oil', 'oil.png', {frameWidth: 80, frameHeight: 100});
 
-        this.load.path = "./assets/sounds/"
+        this.load.path = "./assets/sounds/";
         this.load.audio('startup', 'startupSound.mp3');
         this.load.audio('fixedSound', 'fixedSound.wav');
         this.load.audio('oil', 'pouringoil.wav');
         this.load.audio('socketwrench', 'socketwrench.wav');
         this.load.audio('snap', 'snap.wav');
+
+        this.load.path = "./assets/fonts/";
+        this.load.font('handwritingFont', 'CuteHandWriting.ttf');
+        this.load.font('checklistFont', 'DR_Exclusive_Editorial.ttf');
     }
 
     create() {
