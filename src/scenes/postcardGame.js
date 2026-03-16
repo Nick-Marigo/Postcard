@@ -31,61 +31,10 @@ class PostcardGame extends Phaser.Scene {
 
         this.load.path = "./assets/sounds/"
         this.load.audio('startup', 'startupSound.mp3');
+        this.load.audio('fixedSound', 'fixedSound.wav');
     }
 
     create() {
-
-        /*
-        //Blinking animations for...
-
-        //Air filter Cover
-        this.anims.create({
-            key: 'airFilterCoverBlink',
-            frames: this.anims.generateFrameNumbers('airFilterCover', {start: 0, end: 1}),
-            frameRate: 4,
-            repeat: -1
-        });
-
-        //Generator cover
-        this.anims.create({
-            key: 'generatorCoverBlink',
-            frames: this.anims.generateFrameNumbers('generatorCover', {start: 0, end: 1}),
-            frameRate: 4,
-            repeat: -1
-        });
-
-        //Air filter clean
-        this.anims.create({
-            key: 'airFilterCleanBlink',
-            frames: this.anims.generateFrameNumbers('airFilter', {start: 0, end: 1}),
-            frameRate: 4,
-            repeat: -1
-        });
-
-        //Air filter dirty
-        this.anims.create({
-            key: 'airFilterDirtyBlink',
-            frames: this.anims.generateFrameNumbers('airFilter', {start: 2, end: 3}),
-            frameRate: 4,
-            repeat: -1
-        });
-
-        //Sparkplug blink
-        this.anims.create({
-            key: 'sparkplugBlink',
-            frames: this.anims.generateFrameNumbers('sparkplug', {start: 0, end: 1}),
-            frameRate: 4,
-            repeat: -1
-        });
-
-        //Sparkplug blink
-        this.anims.create({
-            key: 'sparkplugCoverBlink',
-            frames: this.anims.generateFrameNumbers('sparkplugCover', {start: 0, end: 1}),
-            frameRate: 4,
-            repeat: -1
-        });
-        */
 
         let animsName = ['airFilterCoverBlink', 'generatorCoverBlink', 'airFilterCleanBlink', 'airFilterDirtyBlink', 'sparkplugBlink', 'sparkplugDirtyBlink', 'sparkplugCoverBlink', 'socketWrenchBlink', 'turnArrowBlink', 'oilDrainPanBlink', 'wrenchBlink', 'boltBlink', 'oilBlink', 'oilCapBlink', 'funnelBlink'];
         let animsString = ['airFilterCover', 'generatorCover', 'airFilter', 'airFilter', 'sparkplug', 'sparkplug', 'sparkplugCover', 'socketWrench', 'turnArrow', 'oilDrainPan', 'wrench', 'bolt', 'oil', 'oilCap', 'funnel'];
@@ -139,7 +88,14 @@ class PostcardGame extends Phaser.Scene {
         // Key to be able to switch scenes easily
         this.input.keyboard.on('keydown-S', () => {
             console.log('Switching Scene to postcardBackScene');
-            this.scene.start('postcardBackScene');
+
+            const card = document.getElementById('card');
+
+                    card.classList.add('flipped');
+
+                    this.time.delayedCall(3000, () => {
+                        this.scene.start('postcardBackScene');
+                    });
         }, this);
 
     }

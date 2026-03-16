@@ -59,6 +59,8 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.scene.input.setDraggable(this.square1);
         this.scene.input.setDraggable(this.square2);*/
 
+        this.transitionCalled = false;
+
         //Key mechanics add interative circle and progress circle
         this.keyhole = this.scene.add.circle(722, 254, 18, 0xffff00, .25).setInteractive().setDepth(101);
         this.progressRing = this.scene.add.graphics().setDepth(102);
@@ -66,10 +68,14 @@ class Generator extends Phaser.GameObjects.Sprite {
         //varaibles needed for progressRing 
         this.isHoldingKey = false;
         this.holdProgress = 0;
-        this.holdDuration = 500; //6000
+        this.holdDuration = 6000;
         this.startupComplete = false;
         this.ranOnce = false;
         this.startupSound = this.scene.sound.add('startup');
+        this.fixedStartupSound = this.scene.sound.add('fixedSound', {volume: 0.5});
+        this.currentStartupSound = this.startupSound;
+        this.ranFixedStart = false;
+        this.generatorRunning = false;
 
         //Starting up generator and plays startup sound
         this.keyhole.on('pointerdown', () => {
@@ -78,8 +84,8 @@ class Generator extends Phaser.GameObjects.Sprite {
 
             this.isHoldingKey = true;
 
-            if(!this.startupSound.isPlaying) {
-                this.startupSound.play();
+            if(this.currentStartupSound && !this.currentStartupSound.isPlaying) {
+                this.currentStartupSound.play();
             }
         });
 
@@ -92,8 +98,8 @@ class Generator extends Phaser.GameObjects.Sprite {
             this.holdProgress = 0;
             this.progressRing.clear();
 
-            if(this.startupSound.isPlaying) {
-                this.startupSound.stop();
+            if(this.currentStartupSound && this.currentStartupSound.isPlaying) {
+                this.currentStartupSound.stop();
             }
         })
 
@@ -103,6 +109,7 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.generatorCover = this.scene.add.sprite(width / 2, 50, 'generatorCover').setOrigin(.5, 0).setDepth(100);
         //create targets needs to show where player needs to place x item
         this.targetGeneratorCover = this.scene.add.rectangle(200, 675, 540, 360, 0xffff00, 0.25).setVisible(false);
+        this.targetGeneratorCoverTwo = this.scene.add.rectangle(width / 2, 50, 540, 360, 0xffff00, 0.25).setVisible(false).setOrigin(0.5, 0);
         this.turnArrow = this.scene.add.sprite(520, 175, 'turnArrow', 0).setVisible(false);
         this.turnArrow.play('turnArrowBlink');
 
@@ -205,11 +212,13 @@ class Generator extends Phaser.GameObjects.Sprite {
                 this.isHoldingKey = false;
                 this.progressRing.clear();
 
-                if(this.startupSound.isPlaying){
-                    this.startupSound.stop();
+                if(this.currentStartupSound === this.startupSound){
+                    if(this.currentStartupSound.isPlaying) {
+                        this.currentStartupSound.stop();
+                    }
                 }
             }
-        } else {
+        } else if (!this.generatorRunning) {
             exhaustemitter.emitting = false;
         }
 
@@ -335,8 +344,6 @@ class Generator extends Phaser.GameObjects.Sprite {
             this.lastOilWrenchAngle = currentAngle;
 
         }
-
-        console.log(this.oilStep);
     }
 
     //Draws a circular progress ring around the key hole based on how close the player is to completion
@@ -364,8 +371,10 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.holdProgress = 0;
         this.progressRing.clear();
 
-        if(this.startupSound.isPlaying) {
-            this.startupSound.stop();
+        if(this.currentStartupSound === this.startupSound){
+            if(this.currentStartupSound.isPlaying) {
+                this.currentStartupSound.stop();
+            }
         }
     }
 
@@ -405,7 +414,7 @@ class BrokenState extends State {
             scene.checklist.completeTask(1);
             generator.generatorCover.stop();
             generator.generatorCover.setFrame(0);
-            generator.generatorFSM.transition('airFilter');
+            generator.generatorFSM.transition('fixed'); //airFilter
         }
 
     }
@@ -921,9 +930,6 @@ class OilState extends State {
                 generator.oilCap.stop();
                 generator.oilCap.setFrame(0);
                 console.log("Oil cap placed");
-                //generator.funnel.play('funnelBlink');
-                //generator.targetfunnel.setVisible(true);
-                //generator.scene.input.setDraggable(generator.funnel);
                 
             }
         }
@@ -949,7 +955,7 @@ class OilState extends State {
         } else if (generator.oilStep === 11) {
             scene.checklist.completeTask(10);
         } else if (generator.oilStep === 12) {
-            scene.checklist.completeTask(1);
+            scene.checklist.completeTask(11);
             generator.generatorFSM.transition('fixed');
         }
 
@@ -963,12 +969,70 @@ class FixedState extends State {
 
         //Add new tasks to the task list
         scene.checklist.setTasks([
-            'Havent started this state yet'
+            'Replace generator cover',
+            'Start generator'
         ]);
+
+        generator.generatorCover.play('generatorCoverBlink');
+        generator.generatorCover.setInteractive();
+        generator.scene.input.setDraggable(generator.generatorCover);
+        generator.targetGeneratorCoverTwo.setVisible(true);
+
+
+    }
+
+    handleDrop(gameObject, generator) {
+
+        if(gameObject === generator.generatorCover) {
+            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.generatorCover.getBounds(), generator.targetGeneratorCoverTwo.getBounds())) {
+                generator.generatorCover.x = width / 2;
+                generator.generatorCover.y = 50;
+                generator.generatorCover.disableInteractive();
+                generator.generatorCover.stop();
+                generator.generatorCover.setFrame(0);
+                console.log("Cover snapped into place");
+                generator.fixedStep++;
+                generator.targetGeneratorCoverTwo.setVisible(false);
+                generator.currentStartupSound = generator.fixedStartupSound;
+                generator.keyhole.setVisible(true);
+                generator.enableKeyholeTask();
+                generator.holdDuration = 2000;
+            }
+        }
 
     }
 
     execute(scene, generator) {
 
+        if(generator.fixedStep === 1) {
+            scene.checklist.completeTask(0);
+
+            if(!generator.ranFixedStart) {
+                generator.ranFixedStart = true;
+                generator.enableKeyholeTask();
+            }
+        }
+
+        if(generator.fixedStep === 1 && generator.startupComplete) {
+            scene.checklist.completeTask(1);
+            generator.disableKeyholeTask();
+            generator.generatorRunning = true;
+            console.log("Generator repaired and started");
+
+            if(!generator.transitionCalled) {
+                generator.transitionCalled = true;
+                scene.time.delayedCall(7000, () => {
+
+                    const card = document.getElementById('card');
+
+                    card.classList.add('flipped');
+
+                    scene.time.delayedCall(3000, () => {
+                        generator.currentStartupSound.stop();
+                        scene.scene.start('postcardBackScene');
+                    });
+                });
+            }
+        }
     }
 }

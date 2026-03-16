@@ -11,8 +11,19 @@
     <script src="./src/scenes/postcardGame.js"></script>
     <script src="./src/scenes/postcardBack.js"></script>
     <script src="./src/main.js"></script>
+    <link rel="stylesheet" href="animate.css">
 </head>
 <body>
-    <div id="game"></div>
+    <div id="card">
+        <div id="card-inner">
+            <div id="front">
+                <img id="front-image" src="./assets/frontside.png">
+                <div id="game"></div>
+            </div>
+            <div id="back">
+                <img id="back-image" src="./assets/backside.png" alt="Postcard back">
+            </div>
+        </div>
+    </div>
 </body>
 </html>

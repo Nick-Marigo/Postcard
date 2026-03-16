@@ -5,6 +5,8 @@ class PostcardBack extends Phaser.Scene {
     
     create() {
 
+        console.log('postcardBackScene started');
+
         //Create line in the middle
         this.line = this.add.line(width / 2, 10, 0, 50, 0, 625, 0x000000, 1).setOrigin(0).setLineWidth(5);
         
@@ -55,7 +57,24 @@ class PostcardBack extends Phaser.Scene {
         // Key to be able to switch scenes easily
         this.input.keyboard.on('keydown-S', () => {
             console.log('Switching Scene to postcardGameScene');
-            this.scene.start('postcardGameScene');
+
+            const card = document.getElementById('card');
+            const game = document.getElementById('game');
+            const frontImage = document.getElementById('front-image');
+
+            if(card && game && frontImage) {
+
+                frontImage.style.display = 'block';
+                game.style.display = 'none';
+
+                card.classList.remove('flipped');
+
+                this.time.delayedCall(3000, () => {
+                    game.style.display = 'block';
+                    frontImage.style.display = 'none';
+                    this.scene.start('postcardGameScene');
+                });
+            }
         }, this);
 
     }
