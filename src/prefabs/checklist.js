@@ -7,10 +7,12 @@ class Checklist {
 
         this.tasks = [];
         this.lines = [];
+        this.underlines = [];
+        this.boxes = [];
 
         this.list = scene.add.image(x, y, 'checklist');
 
-        this.scene.add.text(50, 50, 'Check List', {fontSize: '36px', color: '#000'});
+        this.scene.add.text(this.x / 2, 50, 'Check List', {fontSize: '36px', color: '#000'});
     }
 
     // Clears any existing tasks and creates a new list of tasks with hidden cross-out line for each one
@@ -18,32 +20,69 @@ class Checklist {
 
         this.tasks.forEach(t => t.destroy());
         this.lines.forEach(l => l.destroy());
+        this.underlines.forEach(u => u.destroy());
+        this.boxes.forEach(b => b.destroy());
 
         this.tasks = [];
         this.lines = [];
+        this.underlines = [];
+        this.boxes = [];
+
+        const startX = this.x / 4 + 10;
+        const boxX = this.x / 5;
+        const maxWidth = 280;
+        const lineLength = 260;
+    
+        let currentY = this.y - 225;
 
         for(let i = 0; i < taskArray.length; i++) {
 
-            let yOffset = this.y - 80 + i * 40;
+            //Checkbox
+            let box = this.scene.add.rectangle(
+                boxX,
+                currentY + 12,
+                14, 
+                14
+            ).setStrokeStyle(2, 0x000000);
 
             let text = this.scene.add.text(
-                this.x - 50,
-                yOffset,
+                startX,
+                currentY,
                 taskArray[i],
-                { fontSize: '20px', color: '#000'}
+                { 
+                    fontSize: '20px', 
+                    color: '#000',
+                    wordWrap: {width: maxWidth, useAdvancedWrap: true}
+                }
             );
 
+            //Underline
+            let underline = this.scene.add.line(
+                0, 0, 
+                startX, 
+                currentY + text.height + 6, 
+                startX + lineLength, 
+                currentY + text.height + 6, 
+                0x000000, 
+                1
+            ).setOrigin(0, 0).setLineWidth(1);
+
+            //Cross-out line
             let line = this.scene.add.rectangle(
-                this.x - 50,
-                yOffset + 12,
-                text.width,
+                50,
+                currentY + text.height / 2,
+                lineLength,
                 3, 0xff0000
             ).setOrigin(0, 0.5);
 
             line.scaleX = 0;
 
+            this.boxes.push(box);
             this.tasks.push(text);
+            this.underlines.push(underline);
             this.lines.push(line);
+
+            currentY += text.height + 20;
 
         }
 

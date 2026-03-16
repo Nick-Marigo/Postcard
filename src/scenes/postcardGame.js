@@ -61,7 +61,7 @@ class PostcardGame extends Phaser.Scene {
         });
 
         //Particle effect for dirty oil
-        this.dirtyOilemitter = this.add.particles(625, 300, 'dirtyOil', {
+        this.dirtyOilemitter = this.add.particles(758, 305, 'dirtyOil', {
             speed: 10,
             gravityY: 100,
             lifespan: 1200,
@@ -69,7 +69,7 @@ class PostcardGame extends Phaser.Scene {
         });
 
         //Particle effect for clean oil
-        this.cleanOilemitter = this.add.particles(685, 100, 'cleanOil', {
+        this.cleanOilemitter = this.add.particles(810, 100, 'cleanOil', {
             speed: 10,
             gravityY: 100,
             lifespan: 1000,
@@ -83,7 +83,7 @@ class PostcardGame extends Phaser.Scene {
         this.generator = new Generator(this, width/2, height/2);
 
         //Create new checklist
-        this.checklist = new Checklist(this, 100, 225);
+        this.checklist = new Checklist(this, 200, 325);
 
         // Key to be able to switch scenes easily
         this.input.keyboard.on('keydown-S', () => {

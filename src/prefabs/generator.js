@@ -62,13 +62,13 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.transitionCalled = false;
 
         //Key mechanics add interative circle and progress circle
-        this.keyhole = this.scene.add.circle(722, 254, 18, 0xffff00, .25).setInteractive().setDepth(101);
+        this.keyhole = this.scene.add.circle(width * .78 - 3, 254, 18, 0xffff00, .25).setInteractive().setDepth(101);
         this.progressRing = this.scene.add.graphics().setDepth(102);
 
         //varaibles needed for progressRing 
         this.isHoldingKey = false;
         this.holdProgress = 0;
-        this.holdDuration = 6000;
+        this.holdDuration = 100;
         this.startupComplete = false;
         this.ranOnce = false;
         this.startupSound = this.scene.sound.add('startup');
@@ -105,28 +105,28 @@ class Generator extends Phaser.GameObjects.Sprite {
 
 
         //create all images for generator and parts
-        this.generatorImage = this.scene.add.sprite(width / 2, 50, 'generator', 0).setOrigin(.5, 0);
-        this.generatorCover = this.scene.add.sprite(width / 2, 50, 'generatorCover').setOrigin(.5, 0).setDepth(100);
+        this.generatorImage = this.scene.add.sprite(width * 2/3 - 50, 50, 'generator', 0).setOrigin(.5, 0);
+        this.generatorCover = this.scene.add.sprite(width * 2/3 - 50, 50, 'generatorCover').setOrigin(.5, 0).setDepth(100);
         //create targets needs to show where player needs to place x item
-        this.targetGeneratorCover = this.scene.add.rectangle(200, 675, 540, 360, 0xffff00, 0.25).setVisible(false);
-        this.targetGeneratorCoverTwo = this.scene.add.rectangle(width / 2, 50, 540, 360, 0xffff00, 0.25).setVisible(false).setOrigin(0.5, 0);
-        this.turnArrow = this.scene.add.sprite(520, 175, 'turnArrow', 0).setVisible(false);
+        this.targetGeneratorCover = this.scene.add.rectangle(width / 2 + 50, 600, 450, 200, 0xffff00, 0.90).setVisible(false);
+        this.targetGeneratorCoverTwo = this.scene.add.rectangle(width * 2/3 - 50, 50, 540, 360, 0xffff00, 0.90).setVisible(false).setOrigin(0.5, 0);
+        this.turnArrow = this.scene.add.sprite(this.generatorImage.x - 20, this.generatorImage.y + 133, 'turnArrow', 0).setVisible(false);
         this.turnArrow.play('turnArrowBlink');
 
         //create all images for airfilter state
 
         //Air filter dirty and clean
         this.airFilterDirty = this.scene.add.sprite(this.generatorImage.x -161, this.generatorImage.y + 105, 'airFilter', 2).setInteractive().setOrigin(0.5, 0);
-        this.airFilterClean = this.scene.add.sprite(550, 490, 'airFilter', 0).setInteractive().setOrigin(0.5, 0);
+        this.airFilterClean = this.scene.add.sprite(900, 500, 'airFilter', 0).setInteractive().setOrigin(0.5, 0);
         //create targets needs to show where player needs to place x item
-        this.targetairFilterDirty = this.scene.add.rectangle(550, 550, 60, 40, 0xffff00, 0.25).setVisible(false);
-        this.targetairFilterClean = this.scene.add.rectangle(this.generatorImage.x - 161, this.generatorImage.y + 125, 60, 40, 0xffff000, 0.25).setVisible(false);
+        this.targetairFilterDirty = this.scene.add.rectangle(525, 450, 60, 40, 0xffff00, 0.90).setVisible(false);
+        this.targetairFilterClean = this.scene.add.rectangle(this.generatorImage.x - 161, this.generatorImage.y + 125, 60, 40, 0xffff000, 0.90).setVisible(false);
 
         //Air filter cover
         this.airFilterCover = this.scene.add.sprite(this.generatorImage.x - 159, this.generatorImage.y + 91, 'airFilterCover').setInteractive().setOrigin(0.5, 0);
         //create targets needs to show where player needs to place x item
-        this.targetairFilterCoverOFF = this.scene.add.rectangle(550, 625, 70, 80, 0xffff000, 0.25).setVisible(false);
-        this.targetairFilterCoverON = this.scene.add.rectangle(this.generatorImage.x - 159, this.generatorImage.y + 91, 70, 80, 0xffff000, 0.25).setOrigin(0.5, 0).setVisible(false);
+        this.targetairFilterCoverOFF = this.scene.add.rectangle(450, 450, 70, 80, 0xffff000, 0.90).setVisible(false);
+        this.targetairFilterCoverON = this.scene.add.rectangle(this.generatorImage.x - 159, this.generatorImage.y + 91, 70, 80, 0xffff000, 0.90).setOrigin(0.5, 0).setVisible(false);
 
 
         // varaibles to turn wrench
@@ -136,14 +136,14 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.wrenchDirection = null;
 
         // Create all images for sparkplug state
-        this.sparkplug = this.scene.add.sprite(625, 525, 'sparkplug', 0).setInteractive();
-        this.targetsparkplug = this.scene.add.rectangle(525, 180, 60, 30, 0xffff00, 0.25).setVisible(false);
-        this.sparkplugDirty = this.scene.add.sprite(525, 180, 'sparkplug', 2).setInteractive().setVisible(false).setDepth(50);
-        this.targetsparkplugDirty = this.scene.add.rectangle(625, 575, 60, 30, 0xffff00, 0.25).setVisible(false);
-        this.sparkplugCover = this.scene.add.sprite(530, 183, 'sparkplugCover', 0).setInteractive();
-        this.socketWrench = this.scene.add.sprite(800, 100, 'socketWrench', 0).setInteractive().setOrigin(0.15, 0.1);
-        this.targetsocketWrench = this.scene.add.rectangle(510, 183, 20, 20, 0xffff00, 0.25).setVisible(false);
-        this.targetsocketWrenchTwo = this.scene.add.rectangle(800, 100, 26, 106, 0xffff00, 0.25).setVisible(false);
+        this.sparkplug = this.scene.add.sprite(900, 575, 'sparkplug', 0).setInteractive();
+        this.targetsparkplug = this.scene.add.rectangle(this.generatorImage.x - 20, this.generatorImage.y + 120, 60, 30, 0xffff00, 0.90).setVisible(false);
+        this.sparkplugDirty = this.scene.add.sprite(this.generatorImage.x - 20, this.generatorImage.y + 120, 'sparkplug', 2).setInteractive().setVisible(false).setDepth(50);
+        this.targetsparkplugDirty = this.scene.add.rectangle(525, 500, 60, 30, 0xffff00, 0.90).setVisible(false);
+        this.sparkplugCover = this.scene.add.sprite(this.generatorImage.x - 20, this.generatorImage.y + 133, 'sparkplugCover', 0).setInteractive();
+        this.socketWrench = this.scene.add.sprite(600, 400, 'socketWrench', 0).setInteractive().setOrigin(0.15, 0.1);
+        this.targetsocketWrench = this.scene.add.rectangle(this.generatorImage.x - 30, this.generatorImage.y + 133, 20, 20, 0xffff00, 0.90).setVisible(false);
+        this.targetsocketWrenchTwo = this.scene.add.rectangle(600, 400, 26, 106, 0xffff00, 0.90).setVisible(false).setOrigin(0.15, 0.1);
 
         //Input for turning socket wrench
         this.socketWrench.on('pointerdown', (pointer) => {
@@ -165,24 +165,24 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.totalOilWrenchRotation = 0;
         this.oilWrenchDirection = null;
 
-        // Create all images for oil state
-        this.bolt = this.scene.add.sprite(625, 300, 'bolt', 0);
-        this.targetbolt = this.scene.add.rectangle(625, 300, 14, 14, 0xffff00, 0.25).setVisible(false);
-        this.targetboltTwo = this.scene.add.rectangle(900, 300, 14, 14, 0xffff00, 0.25).setVisible(false);
-        this.wrench = this.scene.add.sprite(850, 100, 'wrench', 0).setInteractive().setOrigin(0.15, 0.1).setDepth(50);
-        this.targetwrench = this.scene.add.rectangle(625, 300, 14, 14, 0xffff00, 0.25).setVisible(false);
-        this.targetwrenchTwo = this.scene.add.rectangle(850, 100, 30, 106, 0xffff00, 0.25).setVisible(false);
-        this.oilDrainPan = this.scene.add.sprite(850, 500, 'oilDrainPan', 0).setInteractive();
-        this.targetoilDrainPan = this.scene.add.rectangle(625, 400, 50, 50, 0xffff00, 0.25).setVisible(false);
-        this.funnel = this.scene.add.sprite(920, 500, 'funnel', 0).setInteractive().setOrigin(0.5, 1);
-        this.targetfunnel = this.scene.add.rectangle(680, 235, 50, 50, 0xffff00, 0.25).setVisible(false);
-        this.targetfunnelTwo = this.scene.add.rectangle(920, 500, 50, 100, 0xffff00, 0.25).setVisible(false);
-        this.oil = this.scene.add.sprite(850, 650, 'oil', 0).setInteractive();
-        this.targetoil = this.scene.add.rectangle(765, 100, 50, 50, 0xffff00, 0.25).setVisible(false);
-        this.targetoilTwo = this.scene.add.rectangle(850, 650, 50, 50, 0xffff00, 0.25).setVisible(false);
-        this.oilCap = this.scene.add.sprite(680, 235, 'oilCap', 0).setInteractive();
-        this.targetoilCap = this.scene.add.rectangle(1000, 600, 26, 26, 0xffff00, 0.25).setVisible(false);
-        this.targetoilCapTwo = this.scene.add.rectangle(680, 235, 26, 26, 0xffff00, 0.25).setVisible(false);
+        // Create all images for oil state 
+        this.bolt = this.scene.add.sprite(this.generatorImage.x + 75, this.generatorImage.y + 260, 'bolt', 0);
+        //this.targetbolt = this.scene.add.rectangle(this.generatorImage.x + 75, this.generatorImage.y + 260, 14, 14, 0xffff00, 0.90).setVisible(false);
+        //this.targetboltTwo = this.scene.add.rectangle(900, 300, 14, 14, 0xffff00, 0.90).setVisible(false);
+        this.wrench = this.scene.add.sprite(650, 400, 'wrench', 0).setInteractive().setOrigin(0.15, 0.1).setDepth(50);
+        this.targetwrench = this.scene.add.rectangle(this.generatorImage.x + 75, this.generatorImage.y + 260, 14, 14, 0xffff00, 0.90).setVisible(false);
+        this.targetwrenchTwo = this.scene.add.rectangle(650, 400, 30, 106, 0xffff00, 0.90).setVisible(false).setOrigin(0.15, 0.1);
+        this.oilDrainPan = this.scene.add.sprite(1050, 600, 'oilDrainPan', 0).setInteractive();
+        this.targetoilDrainPan = this.scene.add.rectangle(750, 400, 50, 50, 0xffff00, 0.90).setVisible(false);
+        this.funnel = this.scene.add.sprite(950, 500, 'funnel', 0).setInteractive().setOrigin(0.5, 1);
+        this.targetfunnel = this.scene.add.rectangle(this.generatorImage.x + 125, this.generatorImage.y + 182, 50, 50, 0xffff00, 0.90).setVisible(false);
+        this.targetfunnelTwo = this.scene.add.rectangle(950, 500, 50, 100, 0xffff00, 0.90).setVisible(false).setOrigin(0.5, 1);
+        this.oil = this.scene.add.sprite(1050, 450, 'oil', 0).setInteractive();
+        this.targetoil = this.scene.add.rectangle(895, 100, 50, 50, 0xffff00, 0.90).setVisible(false);
+        this.targetoilTwo = this.scene.add.rectangle(1050, 450, 80, 100, 0xffff00, 0.90).setVisible(false);
+        this.oilCap = this.scene.add.sprite(this.generatorImage.x + 125, this.generatorImage.y + 185, 'oilCap', 0).setInteractive();
+        this.targetoilCap = this.scene.add.rectangle(1000, 600, 26, 26, 0xffff00, 0.90).setVisible(false);
+        this.targetoilCapTwo = this.scene.add.rectangle(this.generatorImage.x + 125, this.generatorImage.y + 185, 26, 26, 0xffff00, 0.90).setVisible(false);
 
         //Input for turning wrench
         this.wrench.on('pointerdown', (pointer) => {
@@ -194,6 +194,15 @@ class Generator extends Phaser.GameObjects.Sprite {
         });
         
 
+        //Flashing tween for all targets
+        this.scene.tweens.add({
+            targets: [this.targetGeneratorCover, this.targetGeneratorCoverTwo, this.targetairFilterClean, this.targetairFilterCoverOFF, this.targetairFilterCoverON, this.targetairFilterDirty, this.targetbolt, this.targetboltTwo, this.targetfunnel, this.targetfunnelTwo, this.targetoil, this.targetoilCap, this.targetoilCapTwo, this.targetoilDrainPan, this.targetoilTwo, this.targetsocketWrench, this.targetsocketWrenchTwo, this.targetsparkplug, this.targetsparkplugDirty, this.targetwrench, this.targetwrenchTwo, this.keyhole],
+            alpha: .25,
+            duration: 1000,
+            ease: 'Linear',
+            yoyo: true,
+            repeat: -1 
+        });
 
     }
 
@@ -302,8 +311,8 @@ class Generator extends Phaser.GameObjects.Sprite {
                     this.wrench.stop();
                     this.wrench.setFrame(0);
 
-                    this.wrench.x = 850;
-                    this.wrench.y = 100;
+                    this.wrench.x = 650;
+                    this.wrench.y = 400;
                     this.scene.dirtyOilemitter.emitting = true;
                     this.scene.time.delayedCall(5000, () => {
                         this.scene.dirtyOilemitter.stop();
@@ -414,7 +423,7 @@ class BrokenState extends State {
             scene.checklist.completeTask(1);
             generator.generatorCover.stop();
             generator.generatorCover.setFrame(0);
-            generator.generatorFSM.transition('fixed'); //airFilter
+            generator.generatorFSM.transition('airFilter');
         }
 
     }
@@ -424,8 +433,8 @@ class BrokenState extends State {
         // If generatorCover is in range of its target postion it will snap into position and will increase brokenStep counter
         if(gameObject === generator.generatorCover) {
             if(Phaser.Geom.Intersects.RectangleToRectangle(generator.generatorCover.getBounds(), generator.targetGeneratorCover.getBounds())) {
-                generator.generatorCover.x = 240
-                generator.generatorCover.y = 450
+                generator.generatorCover.x = generator.targetGeneratorCover.x;
+                generator.generatorCover.y = generator.targetGeneratorCover.y - 150;
                 generator.generatorCover.disableInteractive();
                 console.log("Cover snapped into place");
                 generator.brokenStep++;
@@ -459,28 +468,30 @@ class AirFilterState extends State {
     handleDrop(gameObject, generator) {
 
         //If gameobject is airFilterCover and it is over its target in clean or dirty stage will snap to correct position and increase airFilterStep counter
-        if(gameObject === generator.airFilterCover) {
-            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.airFilterCover.getBounds(), generator.targetairFilterCoverOFF.getBounds())) {
-                generator.airFilterCover.x = generator.targetairFilterCoverOFF.x
-                generator.airFilterCover.y = generator.targetairFilterCoverOFF.y - 25
-                generator.airFilterCover.disableInteractive();
-                console.log("Air Filter Cover snapped into place");
-                generator.airFilterStep++;
-                generator.targetairFilterCoverOFF.setVisible(false);
-                generator.targetairFilterDirty.setVisible(true);
-                generator.airFilterCover.stop();
-                generator.airFilterCover.setFrame(0);
-                generator.airFilterDirty.play('airFilterDirtyBlink');
-            }
-            if(Phaser.Geom.Intersects.RectangleToRectangle(generator.airFilterCover.getBounds(), generator.targetairFilterCoverON.getBounds())) {
-                generator.airFilterCover.x = generator.targetairFilterCoverON.x
-                generator.airFilterCover.y = generator.targetairFilterCoverON.y
-                generator.airFilterCover.disableInteractive();
-                console.log("Air Filter Cover snapped into place");
-                generator.airFilterStep++;
-                generator.targetairFilterCoverON.setVisible(false);
-                generator.airFilterCover.stop();
-                generator.airFilterCover.setFrame(0);
+        if(gameObject === generator.airFilterCover && generator.airFilterStep === 0) {
+                if(Phaser.Geom.Intersects.RectangleToRectangle(generator.airFilterCover.getBounds(), generator.targetairFilterCoverOFF.getBounds())) {
+                    generator.airFilterCover.x = generator.targetairFilterCoverOFF.x
+                    generator.airFilterCover.y = generator.targetairFilterCoverOFF.y - 25
+                    generator.airFilterCover.disableInteractive();
+                    console.log("Air Filter Cover snapped into place");
+                    generator.airFilterStep++;
+                    generator.targetairFilterCoverOFF.setVisible(false);
+                    generator.targetairFilterDirty.setVisible(true);
+                    generator.airFilterCover.stop();
+                    generator.airFilterCover.setFrame(0);
+                    generator.airFilterDirty.play('airFilterDirtyBlink');
+                }
+        }
+        if(gameObject === generator.airFilterCover && generator.airFilterStep === 3) {
+                if(Phaser.Geom.Intersects.RectangleToRectangle(generator.airFilterCover.getBounds(), generator.targetairFilterCoverON.getBounds())) {
+                    generator.airFilterCover.x = generator.targetairFilterCoverON.x
+                    generator.airFilterCover.y = generator.targetairFilterCoverON.y
+                    generator.airFilterCover.disableInteractive();
+                    console.log("Air Filter Cover snapped into place");
+                    generator.airFilterStep++;
+                    generator.targetairFilterCoverON.setVisible(false);
+                    generator.airFilterCover.stop();
+                    generator.airFilterCover.setFrame(0);
             }
         }
 
@@ -511,6 +522,7 @@ class AirFilterState extends State {
                 generator.targetairFilterCoverON.setVisible(true);
                 generator.airFilterClean.stop();
                 generator.airFilterClean.setFrame(0);
+                generator.targetairFilterClean.setVisible(false);
                 generator.airFilterCover.play('airFilterCoverBlink');
             }
         }
@@ -568,11 +580,11 @@ class SparkPlugState extends State {
         generator.sparkplugCover.once('pointerdown', () => {
             scene.tweens.add({
                 targets: generator.sparkplugCover,
-                x: 554,
+                x: generator.generatorImage.x,
                 duration: 250,
                 ease: 'Power2',
                 onComplete: () => {
-                    generator.sparkplugCover.x = 555;
+                    generator.sparkplugCover.x = generator.generatorImage.x;
                     generator.sparkplugCover.disableInteractive();
                     scene.checklist.completeTask(0);
                     generator.totalWrenchRotation = 0;
@@ -662,11 +674,11 @@ class SparkPlugState extends State {
                 generator.sparkplugCover.once('pointerdown', () => {
                         generator.scene.tweens.add({
                             targets: generator.sparkplugCover,
-                            x: 554,
+                            x: generator.generatorImage.x - 20,
                             duration: 250,
                             ease: 'Power2',
                             onComplete: () => {
-                                generator.sparkplugCover.x = 530;
+                                generator.sparkplugCover.x = generator.generatorImage.x - 20;
                                 generator.sparkplugCover.disableInteractive();
                                 generator.scene.checklist.completeTask(0);
                                 generator.sparkplugCover.stop();
@@ -758,8 +770,8 @@ class OilState extends State {
                 generator.totalOilWrenchRotation = 0;
                 generator.turningOilWrench = false;
                 generator.oilWrenchDirection = 'ccw';
-                generator.turnArrow.x = 625;
-                generator.turnArrow.y = 300;
+                generator.turnArrow.x = generator.generatorImage.x + 75;
+                generator.turnArrow.y = generator.generatorImage.y + 260;
                 generator.turnArrow.setVisible(true);
                 generator.turnArrow.setFlipX(false);
                 console.log("Wrench placed");
@@ -789,15 +801,15 @@ class OilState extends State {
         if(gameObject === generator.wrench && generator.oilStep === 5) {
             if(Phaser.Geom.Intersects.RectangleToRectangle(generator.wrench.getBounds(), generator.targetwrenchTwo.getBounds())) {
                 generator.targetwrenchTwo.setVisible(false);
-                generator.wrench.x = generator.targetwrenchTwo.x - 10;
-                generator.wrench.y = generator.targetwrenchTwo.y - 5;
+                generator.wrench.x = 650;
+                generator.wrench.y = 400;
                 generator.oilStep++;
                 generator.wrench.disableInteractive();
                 generator.wrench.stop();
                 generator.wrench.setFrame(0);
                 console.log("Wrench placed");
-                generator.oilDrainPan.x = 850;
-                generator.oilDrainPan.y = 500;
+                generator.oilDrainPan.x = 1050;
+                generator.oilDrainPan.y = 600;
                 generator.oilDrainPan.setFrame(0);
                 generator.oilCap.play('oilCapBlink');
                 generator.targetoilCap.setVisible(true);
@@ -826,7 +838,7 @@ class OilState extends State {
             if(Phaser.Geom.Intersects.RectangleToRectangle(generator.funnel.getBounds(), generator.targetfunnel.getBounds())) {
                 generator.targetfunnel.setVisible(false);
                 generator.funnel.x = generator.targetfunnel.x;
-                generator.funnel.y = generator.targetfunnel.y + 15;
+                generator.funnel.y = generator.targetfunnel.y + 18;
                 generator.oilStep++;
                 generator.funnel.disableInteractive();
                 generator.funnel.stop();
@@ -876,6 +888,7 @@ class OilState extends State {
 
                             generator.oil.play('oilBlink');
                             generator.targetoilTwo.setVisible(true);
+                            generator.oil.setOrigin(0.5, 0.5);
                            
                         });
 
@@ -923,8 +936,8 @@ class OilState extends State {
         if(gameObject === generator.oilCap && generator.oilStep === 11) {
             if(Phaser.Geom.Intersects.RectangleToRectangle(generator.oilCap.getBounds(), generator.targetoilCapTwo.getBounds())) {
                 generator.targetoilCapTwo.setVisible(false);
-                generator.oilCap.x = 680;
-                generator.oilCap.y = 235;
+                generator.oilCap.x = generator.generatorImage.x + 125;
+                generator.oilCap.y = generator.generatorImage.y + 185;
                 generator.oilStep++;
                 generator.oilCap.disableInteractive();
                 generator.oilCap.stop();
@@ -978,15 +991,14 @@ class FixedState extends State {
         generator.scene.input.setDraggable(generator.generatorCover);
         generator.targetGeneratorCoverTwo.setVisible(true);
 
-
     }
 
     handleDrop(gameObject, generator) {
 
         if(gameObject === generator.generatorCover) {
             if(Phaser.Geom.Intersects.RectangleToRectangle(generator.generatorCover.getBounds(), generator.targetGeneratorCoverTwo.getBounds())) {
-                generator.generatorCover.x = width / 2;
-                generator.generatorCover.y = 50;
+                generator.generatorCover.x = generator.generatorImage.x;
+                generator.generatorCover.y = generator.generatorImage.y;
                 generator.generatorCover.disableInteractive();
                 generator.generatorCover.stop();
                 generator.generatorCover.setFrame(0);
