@@ -13,6 +13,7 @@ class PostcardGame extends Phaser.Scene {
         this.load.spritesheet('airFilter', 'airFilter.png', {frameWidth: 60, frameHeight: 40});
         this.load.image('checklist', 'checklist.png');
         this.load.image('exhaust', 'exhaust.png');
+        this.load.image('placematParts', 'placematParts.png');
 
         //Sparkplug
         this.load.spritesheet('sparkplug', '/Sparkplug.png', {frameWidth: 60, frameHeight: 30});
@@ -32,6 +33,9 @@ class PostcardGame extends Phaser.Scene {
         this.load.path = "./assets/sounds/"
         this.load.audio('startup', 'startupSound.mp3');
         this.load.audio('fixedSound', 'fixedSound.wav');
+        this.load.audio('oil', 'pouringoil.wav');
+        this.load.audio('socketwrench', 'socketwrench.wav');
+        this.load.audio('snap', 'snap.wav');
     }
 
     create() {
@@ -52,7 +56,7 @@ class PostcardGame extends Phaser.Scene {
         }
 
         //Particle effect for generator exhaust
-        this.exhaustemitter = this.add.particles(775, 150, 'exhaust', {
+        this.exhaustemitter = this.add.particles(915, 150, 'exhaust', {
             speed: 50,
             gravityX: 200,
             scale: {start: 1, end: 0},
