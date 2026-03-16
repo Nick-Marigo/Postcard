@@ -14,6 +14,7 @@ class PostcardGame extends Phaser.Scene {
         this.load.image('checklist', 'checklist.png');
         this.load.image('exhaust', 'exhaust.png');
         this.load.image('placematParts', 'placematParts.png');
+        this.load.image('placematTools', 'placematTools.png');
 
         //Sparkplug
         this.load.spritesheet('sparkplug', '/Sparkplug.png', {frameWidth: 60, frameHeight: 30});

@@ -54,6 +54,7 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.socketWrenchSound = this.scene.sound.add('socketwrench', {loop: true});
 
         this.placematParts = this.scene.add.sprite(840, 425, 'placematParts').setOrigin(0);
+        this.placematTools = this.scene.add.sprite(540, 450, 'placematTools');
 
         //Key mechanics add interative circle and progress circle
         this.keyhole = this.scene.add.circle(width * .78 - 3, 254, 18, 0xffff00, .25).setInteractive().setDepth(101);
@@ -113,13 +114,13 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.airFilterDirty = this.scene.add.sprite(this.generatorImage.x -161, this.generatorImage.y + 105, 'airFilter', 2).setInteractive().setOrigin(0.5, 0);
         this.airFilterClean = this.scene.add.sprite(this.placematParts.x + 64, this.placematParts.y + 25, 'airFilter', 0).setInteractive().setOrigin(0.5, 0);
         //create targets needs to show where player needs to place x item
-        this.targetairFilterDirty = this.scene.add.rectangle(525, 450, 60, 40, 0xffff00, 0.90).setVisible(false);
+        this.targetairFilterDirty = this.scene.add.rectangle(this.placematTools.x - 10, this.placematTools.y - 20, 60, 40, 0xffff00, 0.90).setVisible(false);
         this.targetairFilterClean = this.scene.add.rectangle(this.generatorImage.x - 161, this.generatorImage.y + 125, 60, 40, 0xffff000, 0.90).setVisible(false);
 
         //Air filter cover
         this.airFilterCover = this.scene.add.sprite(this.generatorImage.x - 159, this.generatorImage.y + 91, 'airFilterCover').setInteractive().setOrigin(0.5, 0);
         //create targets needs to show where player needs to place x item
-        this.targetairFilterCoverOFF = this.scene.add.rectangle(450, 450, 70, 80, 0xffff000, 0.90).setVisible(false);
+        this.targetairFilterCoverOFF = this.scene.add.rectangle(this.placematTools.x - 97, this.placematTools.y - 40, 70, 80, 0xffff000, 0.90).setOrigin(0.5, 0).setVisible(false);
         this.targetairFilterCoverON = this.scene.add.rectangle(this.generatorImage.x - 159, this.generatorImage.y + 91, 70, 80, 0xffff000, 0.90).setOrigin(0.5, 0).setVisible(false);
 
 
@@ -133,11 +134,11 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.sparkplug = this.scene.add.sprite(this.placematParts.x + 54, this.placematParts.y + 100, 'sparkplug', 0).setInteractive();
         this.targetsparkplug = this.scene.add.rectangle(this.generatorImage.x - 20, this.generatorImage.y + 120, 60, 30, 0xffff00, 0.90).setVisible(false);
         this.sparkplugDirty = this.scene.add.sprite(this.generatorImage.x - 20, this.generatorImage.y + 120, 'sparkplug', 2).setInteractive().setVisible(false).setDepth(50);
-        this.targetsparkplugDirty = this.scene.add.rectangle(525, 500, 60, 30, 0xffff00, 0.90).setVisible(false);
+        this.targetsparkplugDirty = this.scene.add.rectangle(this.placematTools.x - 10, this.placematTools.y + 30, 60, 30, 0xffff00, 0.90).setVisible(false);
         this.sparkplugCover = this.scene.add.sprite(this.generatorImage.x - 20, this.generatorImage.y + 133, 'sparkplugCover', 0).setInteractive();
-        this.socketWrench = this.scene.add.sprite(600, 400, 'socketWrench', 0).setInteractive().setOrigin(0.15, 0.1);
+        this.socketWrench = this.scene.add.sprite(this.placematTools.x + 46, this.placematTools.y - 40, 'socketWrench', 0).setInteractive().setOrigin(0.15, 0.1);
         this.targetsocketWrench = this.scene.add.rectangle(this.generatorImage.x - 30, this.generatorImage.y + 133, 20, 20, 0xffff00, 0.90).setVisible(false);
-        this.targetsocketWrenchTwo = this.scene.add.rectangle(600, 400, 26, 106, 0xffff00, 0.90).setVisible(false).setOrigin(0.15, 0.1);
+        this.targetsocketWrenchTwo = this.scene.add.rectangle(this.placematTools.x + 46, this.placematTools.y - 40, 26, 106, 0xffff00, 0.90).setVisible(false).setOrigin(0.15, 0.1);
 
         //Input for turning socket wrench
         this.socketWrench.on('pointerdown', (pointer) => {
@@ -171,9 +172,9 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.bolt = this.scene.add.sprite(this.generatorImage.x + 75, this.generatorImage.y + 260, 'bolt', 0);
         //this.targetbolt = this.scene.add.rectangle(this.generatorImage.x + 75, this.generatorImage.y + 260, 14, 14, 0xffff00, 0.90).setVisible(false);
         //this.targetboltTwo = this.scene.add.rectangle(900, 300, 14, 14, 0xffff00, 0.90).setVisible(false);
-        this.wrench = this.scene.add.sprite(650, 400, 'wrench', 0).setInteractive().setOrigin(0.15, 0.1).setDepth(50);
+        this.wrench = this.scene.add.sprite(this.placematTools.x + 90, this.placematTools.y - 40, 'wrench', 0).setInteractive().setOrigin(0.15, 0.1).setDepth(50);
         this.targetwrench = this.scene.add.rectangle(this.generatorImage.x + 75, this.generatorImage.y + 260, 14, 14, 0xffff00, 0.90).setVisible(false);
-        this.targetwrenchTwo = this.scene.add.rectangle(650, 400, 30, 106, 0xffff00, 0.90).setVisible(false).setOrigin(0.15, 0.1);
+        this.targetwrenchTwo = this.scene.add.rectangle(this.placematTools.x + 90, this.placematTools.y - 40, 30, 106, 0xffff00, 0.90).setVisible(false).setOrigin(0.15, 0.1);
         this.oilDrainPan = this.scene.add.sprite(this.placematParts.x + 178, this.placematParts.y + 180, 'oilDrainPan', 0).setInteractive();
         this.targetoilDrainPan = this.scene.add.rectangle(750, 400, 50, 50, 0xffff00, 0.90).setVisible(false);
         this.funnel = this.scene.add.sprite(this.placematParts.x + 57, this.placematParts.y + 230, 'funnel', 0).setInteractive().setOrigin(0.5, 1);
@@ -485,8 +486,8 @@ class AirFilterState extends State {
         //If gameobject is airFilterCover and it is over its target in clean or dirty stage will snap to correct position and increase airFilterStep counter
         if(gameObject === generator.airFilterCover && generator.airFilterStep === 0) {
                 if(Phaser.Geom.Intersects.RectangleToRectangle(generator.airFilterCover.getBounds(), generator.targetairFilterCoverOFF.getBounds())) {
-                    generator.airFilterCover.x = generator.targetairFilterCoverOFF.x
-                    generator.airFilterCover.y = generator.targetairFilterCoverOFF.y - 25
+                    generator.airFilterCover.x = generator.targetairFilterCoverOFF.x;
+                    generator.airFilterCover.y = generator.targetairFilterCoverOFF.y;
                     generator.airFilterCover.disableInteractive();
                     console.log("Air Filter Cover snapped into place");
                     generator.airFilterStep++;
@@ -515,8 +516,8 @@ class AirFilterState extends State {
         //If gameobject is airFilterDirty and it is over its target will snap to correct position and increase airFilterStep counter
         if(gameObject === generator.airFilterDirty) {
             if(Phaser.Geom.Intersects.RectangleToRectangle(generator.airFilterDirty.getBounds(), generator.targetairFilterDirty.getBounds())) {
-                generator.airFilterDirty.x = generator.targetairFilterDirty.x
-                generator.airFilterDirty.y = generator.targetairFilterDirty.y - 25
+                generator.airFilterDirty.x = generator.targetairFilterDirty.x;
+                generator.airFilterDirty.y = generator.targetairFilterDirty.y - 20;
                 generator.airFilterDirty.disableInteractive();
                 console.log("Air Filter Dirty snapped into place");
                 generator.airFilterStep++;
@@ -806,18 +807,10 @@ class OilState extends State {
         }
 
         if(generator.oilStep === 3) {
-            /*generator.scene.time.addEvent({
-                delay: 5000,
-                callback: () => {
-                    generator.scene.dirtyOil
-                },
-                callbackScope: this,
-                loop: false
-            })*/
             if(Phaser.Geom.Intersects.RectangleToRectangle(generator.wrench.getBounds(), generator.targetwrenchTwo.getBounds())) {
                 generator.targetwrench.setVisible(false);
-                generator.wrench.x = generator.targetwrenchTwo.x - 10;
-                generator.wrench.y = generator.targetwrenchTwo.y - 5;
+                generator.wrench.x = generator.targetwrenchTwo.x;
+                generator.wrench.y = generator.targetwrenchTwo.y;
                 generator.oilStep++;
                 generator.scene.input.setDraggable(generator.wrench, false);
                 generator.wrench.setInteractive();
@@ -829,8 +822,8 @@ class OilState extends State {
         if(gameObject === generator.wrench && generator.oilStep === 5) {
             if(Phaser.Geom.Intersects.RectangleToRectangle(generator.wrench.getBounds(), generator.targetwrenchTwo.getBounds())) {
                 generator.targetwrenchTwo.setVisible(false);
-                generator.wrench.x = 650;
-                generator.wrench.y = 400;
+                generator.wrench.x = generator.targetwrenchTwo.x;
+                generator.wrench.y = generator.targetwrenchTwo.y;
                 generator.oilStep++;
                 generator.wrench.disableInteractive();
                 generator.wrench.stop();
