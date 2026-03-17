@@ -7,7 +7,10 @@ class PostcardBack extends Phaser.Scene {
 
         console.log('postcardBackScene started');
 
+        // Add postcard to flipped class
         document.getElementById('card').classList.add('flipped');
+
+        //Change Phaser canvas to the back container so new scene will load
         const canvas = document.querySelector('#game canvas');
         if(canvas) {
             document.getElementById('game-back').appendChild(canvas);
@@ -78,11 +81,14 @@ class PostcardBack extends Phaser.Scene {
 
             if(card && game && frontImage) {
 
+                //Show front image and hide Phaser during flip
                 frontImage.style.display = 'block';
                 game.style.display = 'none';
 
+                //Remove postcard from flipped class
                 card.classList.remove('flipped');
 
+                // Move Phaser canvas back to front
                 const canvas = document.querySelector('#game-back canvas');
                 if(canvas) {
                     document.getElementById('game').appendChild(canvas);
@@ -96,6 +102,7 @@ class PostcardBack extends Phaser.Scene {
             }
         })
 
+        //All images and texts for credits and interactive actions
         const creditsText = this.add.text(100, 600, 'Credits', {
             fontFamily: 'checklistFont',
             fontSize: '28px',
@@ -104,7 +111,7 @@ class PostcardBack extends Phaser.Scene {
             padding: { left: 10, right: 10, top: 6, bottom: 6}
         }).setInteractive({useHandCursor: true});
 
-        const creditBox = this.add.rectangle(width / 2, height / 2, 660, 550, '0xd4b472').setDepth(100).setVisible(false);
+        const creditBox = this.add.rectangle(width / 2, height / 2, 660, 550, 0xd4b472).setDepth(100).setVisible(false);
 
         const creditTextBody = this.add.text(creditBox.x - 250, creditBox.y - 250, 
             `Art and Code by Nick Marigo

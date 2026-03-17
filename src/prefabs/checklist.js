@@ -48,9 +48,11 @@ class Checklist {
                 14
             ).setStrokeStyle(2, 0x000000);
 
+            //X mark for checkbox
             let Xmark = this.scene.add.sprite(boxX, currentY + 12, 'Xmark', 0);
             Xmark.setData('done', false);
 
+            // Text
             let text = this.scene.add.text(
                 startX,
                 currentY,
@@ -96,7 +98,8 @@ class Checklist {
 
     }
 
-    //Animates the cross-out line for the given index of the current task list and fades the text.
+    //Animates the cross-out line for the given index of the current task list and fades the text. 
+    //Plays Xmark animation
     completeTask(index) {
 
         let line = this.lines[index];
