@@ -39,7 +39,7 @@ class PostcardGame extends Phaser.Scene {
         this.load.audio('fixedSound', 'fixedSound.wav');
         this.load.audio('oil', 'pouringoil.wav');
         this.load.audio('socketwrench', 'socketwrench.wav');
-        this.load.audio('snap', 'snap.wav');
+        this.load.audio('completeSound', 'completeobtainedsound.wav');
         this.load.audio('message', 'PostcardMessage.m4a');
 
         this.load.path = "./assets/Music/";

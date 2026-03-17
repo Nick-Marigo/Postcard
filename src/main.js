@@ -6,7 +6,7 @@
 //All Art and Code by Nick Marigo
 
 //Sounds 
-// Snapping Sound Effect by DRFX: https://freesound.org/people/DRFX/sounds/416928/
+// Complete/obtained Sound Effect by Annyew: https://freesound.org/people/Annyew/sounds/580116/
 // Socket Wrench Sound Effect by yfjesse: https://freesound.org/people/yfjesse/sounds/131200/
 // Oil Pouring Sound Effect by clement.bern: https://freesound.org/people/clement.bernardeau/sounds/699231/
 // Generator Starting Sound Effect by mrrap4food: https://freesound.org/people/mrrap4food/sounds/618984/

@@ -50,7 +50,7 @@ class Generator extends Phaser.GameObjects.Sprite {
         this.transitionCalled = false;
 
         this.pouringOil = this.scene.sound.add('oil');
-        this.snap = this.scene.sound.add('snap');
+        this.snap = this.scene.sound.add('completeSound');
         this.socketWrenchSound = this.scene.sound.add('socketwrench', {loop: true});
 
         this.placematParts = this.scene.add.sprite(840, 425, 'placematParts').setOrigin(0);

@@ -109,8 +109,8 @@ class PostcardBack extends Phaser.Scene {
         const creditTextBody = this.add.text(creditBox.x - 250, creditBox.y - 250, 
             `Art and Code by Nick Marigo
     Sounds:
-        -Snapping Sound Effect by DRFX:
-        https://freesound.org/people/DRFX/sounds/416928/
+        -Complete/obtained Sound Effect by Annyew: 
+        https://freesound.org/people/Annyew/sounds/580116/
         -Socket Wrench Sound Effect by yfjesse: 
         https://freesound.org/people/yfjesse/sounds/131200/
         -Oil Pouring Sound Effect by clement.bern: 
