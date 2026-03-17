@@ -40,7 +40,8 @@ body {
 
 #front-image,
 #back-image,
-#game {
+#game,
+#game-back {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -52,6 +53,7 @@ body {
     object-fit: cover;
 }
 
-#game {
+#game,
+#game-back {
     z-index: 2;
 }

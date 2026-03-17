@@ -9,10 +9,11 @@ class Checklist {
         this.lines = [];
         this.underlines = [];
         this.boxes = [];
+        this.Xmarks = [];
 
         this.list = scene.add.image(x, y, 'checklist');
 
-        this.scene.add.text(this.x / 2, 50, 'Check List', {fontSize: '36px', color: '#000'});
+        this.title = this.scene.add.text(this.x, this.y - 255, 'Check List', {fontFamily: 'checklistFont', fontSize: '36px', color: '#000'}).setOrigin(0.5, 0.5);
     }
 
     // Clears any existing tasks and creates a new list of tasks with hidden cross-out line for each one
@@ -22,11 +23,13 @@ class Checklist {
         this.lines.forEach(l => l.destroy());
         this.underlines.forEach(u => u.destroy());
         this.boxes.forEach(b => b.destroy());
+        this.Xmarks.forEach(m => m.destroy());
 
         this.tasks = [];
         this.lines = [];
         this.underlines = [];
         this.boxes = [];
+        this.Xmarks = [];
 
         const startX = this.x / 4 + 10;
         const boxX = this.x / 5;
@@ -45,11 +48,15 @@ class Checklist {
                 14
             ).setStrokeStyle(2, 0x000000);
 
+            let Xmark = this.scene.add.sprite(boxX, currentY + 12, 'Xmark', 0);
+            Xmark.setData('done', false);
+
             let text = this.scene.add.text(
                 startX,
                 currentY,
                 taskArray[i],
                 { 
+                    fontFamily: 'checklistFont',
                     fontSize: '20px', 
                     color: '#000',
                     wordWrap: {width: maxWidth, useAdvancedWrap: true}
@@ -78,6 +85,7 @@ class Checklist {
             line.scaleX = 0;
 
             this.boxes.push(box);
+            this.Xmarks.push(Xmark);
             this.tasks.push(text);
             this.underlines.push(underline);
             this.lines.push(line);
@@ -92,6 +100,11 @@ class Checklist {
     completeTask(index) {
 
         let line = this.lines[index];
+        let mark = this.Xmarks[index];
+
+        if(mark.getData('done')) return;
+
+        mark.setData('done', true);
 
         this.scene.tweens.add({
             targets: line,
@@ -99,6 +112,8 @@ class Checklist {
             duration: 300,
             ease: 'Power2'
         });
+
+        mark.play('XmarkAnim');
 
         this.tasks[index].setColor('#777');
 
